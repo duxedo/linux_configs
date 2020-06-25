@@ -1,3 +1,9 @@
 [submodule "vim"]
 	path = vim
 	url = https://github.com/duxedo/vim.git
+[submodule "awesome/freedesktop"]
+	path = awesome/freedesktop
+	url = https://github.com/lcpz/awesome-freedesktop.git
+[submodule "awesome/lain"]
+	path = awesome/lain
+	url = https://github.com/lcpz/lain.git
