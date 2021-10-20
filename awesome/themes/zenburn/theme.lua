@@ -4,11 +4,12 @@
 -------------------------------
 
 local themes_path = require("gears.filesystem").get_themes_dir()
+local current_path = require("awful").util.getdir("config") .. "/themes/zenburn"
 local dpi = require("beautiful.xresources").apply_dpi
 
 -- {{{ Main
 theme = {}
-theme.wallpaper = themes_path .. "zenburn/zenburn-background.png"
+theme.wallpaper = current_path .. "/zenburn-background-5120.png"
 -- }}}
 
 -- {{{ Styles
@@ -28,7 +29,7 @@ theme.bg_systray = theme.bg_normal
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(2)
 theme.border_normal = "#3F3F3F"
-theme.border_focus  = "#6F6F6F"
+theme.border_focus  = "#8F8FFF"
 theme.border_marked = "#CC9393"
 -- }}}
 

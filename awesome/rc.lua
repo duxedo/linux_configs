@@ -45,6 +45,8 @@ do
     end)
 end
 -- }}}
+--
+presswait = { started = false }
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
@@ -55,7 +57,7 @@ local theme = beautiful.get()
 
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
-browser = "firefox"
+browser = "brave-bin"
 filemanager = "fm"
 editor = "kitty v"
 modkey = "Mod4"
@@ -64,17 +66,17 @@ modkey = "Mod4"
 awful.layout.layouts = {
     awful.layout.suit.tile,
     awful.layout.suit.floating,
-    --awful.layout.suit.tile.left,
+    awful.layout.suit.tile.left,
     awful.layout.suit.tile.bottom,
     -- awful.layout.suit.tile.top,
-    -- awful.layout.suit.fair,
-    -- awful.layout.suit.fair.horizontal,
+    awful.layout.suit.fair,
+    awful.layout.suit.fair.horizontal,
        awful.layout.suit.spiral,
-    -- awful.layout.suit.spiral.dwindle,
+     awful.layout.suit.spiral.dwindle,
     awful.layout.suit.max,
     -- awful.layout.suit.max.fullscreen,
     -- awful.layout.suit.magnifier,
-    -- awful.layout.suit.corner.nw,
+     awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
@@ -107,23 +109,23 @@ myawesomemenu = {
 }
 
 myexitmenu = {
-    { "log out", function() awesome.quit() end, "/usr/share/icons/Arc-Maia/actions/24@2x/system-log-out.png" },
-    { "suspend", "systemctl suspend", "/usr/share/icons/Arc-Maia/actions/24@2x/gnome-session-suspend.png" },
-    { "hibernate", "systemctl hibernate", "/usr/share/icons/Arc-Maia/actions/24@2x/gnome-session-hibernate.png" },
-    { "reboot", "systemctl reboot", "/usr/share/icons/Arc-Maia/actions/24@2x/view-refresh.png" },
-    { "shutdown", "poweroff", "/usr/share/icons/Arc-Maia/actions/24@2x/system-shutdown.png" }
+    { "log out", function() awesome.quit() end, "/usr/share/icons/breeze-dark/actions/22/system-log-out.svg" },
+    { "suspend", "systemctl suspend", "/usr/share/icons/breeze-dark/actions/22/system-suspend.svg" },
+    { "hibernate", "systemctl hibernate", "/usr/share/icons/breeze-dark/actions/22/system-suspend-hibernate.svg" },
+    { "reboot", "systemctl reboot", "/usr/share/icons/breeze-dark/actions/22/system-reboot.svg" },
+    { "shutdown", "poweroff", "/usr/share/icons/breeze-dark/actions/22/system-shutdown.svg" }
 }
 
 mymainmenu = freedesktop.menu.build({
     before = {
-        { "Terminal", terminal, "/usr/share/icons/Moka/32x32/apps/utilities-terminal.png" },
-        { "Browser", browser, "/usr/share/icons/hicolor/24x24/apps/firefox.png" },
+        { "Terminal", terminal, "/usr/share/icons/breeze-dark/apps/22/utilities-terminal.svg" },
+        { "Browser", browser, "/usr/share/icons/hicolor/128x128/apps/brave-bin.png" },
         { "Files", filemanager, "/usr/share/icons/Arc-Maia/places/32/user-home.png" },
         -- other triads can be put here
     },
     after = {
         { "Awesome", myawesomemenu, "/usr/share/awesome/icons/awesome16.png" },
-        { "Exit", myexitmenu, "/usr/share/icons/Arc-Maia/actions/24@2x/system-restart.png" },
+        { "Exit", myexitmenu, "/usr/share/icons/breeze-dark/actions/22/system-restart.svg" },
         -- other triads can be put here
     }
 })
@@ -184,10 +186,10 @@ local tasklist_buttons = gears.table.join(
                                           end),
                      awful.button({ }, 3, client_menu_toggle_fn()),
                      awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
+                                              awful.tag.viewnext()
                                           end),
                      awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
+                                              awful.tag.viewprev()
                                           end))
 
 local function set_wallpaper(s)
@@ -204,6 +206,10 @@ end
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
+
+local textclock = wibox.widget.textclock()
+local month_calendar = awful.widget.calendar_popup.month()
+month_calendar:attach(textclock, "tr")
 
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
@@ -248,6 +254,7 @@ awful.screen.connect_for_each_screen(function(s)
                     mykeyboardlayout,
                     --powerline_widget,
                     --gpmdp.widget,
+                    textclock,
                     s.mylayoutbox,
                 },
     }
@@ -314,6 +321,8 @@ globalkeys = gears.table.join(
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Mod1"    }, "l", function () awful.spawn("xscreensaver-command -lock") end,
+              {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey,           }, "z", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
@@ -333,7 +342,7 @@ globalkeys = gears.table.join(
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)           end,
               {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey, Shift     }, "b", function () awful.spawn("/usr/bin/firefox")          end,
+    awful.key({ modkey, Shift     }, "b", function () awful.spawn(browser)                   end,
               {description = "launch Browser", group = "launcher"}),
     awful.key({ modkey, "Control"}, "Escape", function () awful.spawn("/usr/bin/rofi -show drun -modi drun") end,
               {description = "launch rofi", group = "launcher"}),
@@ -341,13 +350,6 @@ globalkeys = gears.table.join(
               {description = "launch filemanager", group = "launcher"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                       end,
               {description = "select previous", group = "layout"}),
-    awful.key({                   }, "Print", function () awful.spawn("/usr/bin/i3-scrot -d")   end,
-              {description = "capture a screenshot", group = "screenshot"}),
-    awful.key({"Control"          }, "Print", function () awful.spawn("/usr/bin/i3-scrot -w")   end,
-              {description = "capture a screenshot of active window", group = "screenshot"}),
-    awful.key({"Shift"            }, "Print", function () awful.spawn("/usr/bin/i3-scrot -s")   end,
-              {description = "capture a screenshot of selection", group = "screenshot"}),
-
     awful.key({ modkey, "Control" }, "n",
               function ()
                   local c = awful.client.restore()
@@ -402,6 +404,16 @@ clientkeys = gears.table.join(
             c.minimized = true
         end ,
         {description = "minimize", group = "client"}),
+    awful.key({ modkey,           }, "[",
+        function (c)
+            awful.client.incwfact(0.05, c)
+        end ,
+        {description = "inc vertical size", group = "client"}),
+    awful.key({ modkey,           }, "]",
+        function (c)
+            awful.client.incwfact(-0.05, c)
+        end ,
+        {description = "dec verticals size", group = "client"}),
     awful.key({ modkey,           }, "m",
         function (c)
             c.maximized = not c.maximized
@@ -476,17 +488,29 @@ clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise()
                  mymainmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, awful.mouse.client.resize))
+    awful.button({ modkey }, 3, function (c) awful.mouse.client.resize(c, "cornerse") end))
 
 -- Set keys
 root.keys(globalkeys)
 -- }}}
-
+function inspect_client(c)
+    return '{' .. c.name .. ''
+end
+inspect = require('inspect')
+function dumpclients()
+    file = io.open("/home/reinhardt/awdump", "a")
+    file:write("begin")
+    for _, c in ipairs(client.get()) do
+        file:write(inspect(client.get()) .. '\n')
+    end
+    io.close(file)
+end 
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
     { rule = { },
+      except = { name = "Origin" },
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
@@ -510,17 +534,19 @@ awful.rules.rules = {
           "Arandr",
           "Gpick",
           "Kruler",
-          "MessageWin",  -- kalarm.
           "Sxiv",
-          "Wpa_gui",
-          "pinentry",
-          "veromix",
-          "xtightvncviewer",
           "Steam",
-          "Google Play Music Desktop Player"},
+          "spotify",
+          "Shutter",
+          "KeePassXC",
+          "qBittorrent"
+        },
 
         name = {
           "Event Tester",  -- xev.
+          "Origin",   -- Origin client.
+          "Welcome to Android Studio",
+          "Android Virtual Device Manager" -- android studio AVD
         },
         role = {
           "AlarmWindow",  -- Thunderbird's calendar.
@@ -533,6 +559,11 @@ awful.rules.rules = {
       properties = { titlebars_enabled = true }
     },
 	
+    { rule_any = {type = { "dialog" } },
+      callback = function (c)
+          awful.placement.centered(c, nil)
+      end
+    },
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
@@ -543,14 +574,51 @@ awful.rules.rules = {
 
 -- {{{ Signals
 
-
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
-    if awesome.startup and
+    local class = c.class
+    local name = c.name
+    local instance = c.instance
+    if class == nil then
+        class = "nil"
+    end    
+    if name == nil then
+        name = "nil"
+    end    
+    if instance == nil then
+        instance = "nil"
+    end    
+    -- naughty.notify({preset=naughty.config.presets.normal, title="debug", text=name .. "\n" .. class .. "\n" .. instance})
+    if class == "Slack" or class == "TelegramDesktop" then
+        local tag = awful.screen.focused().tags[7]
+        if tag ~= nil then
+            c:tags({tag})
+        end    
+    elseif class == "Firefox" then
+        local tag = awful.screen.focused().tags[1]
+        if tag ~= nil then
+            c:tags({tag})
+        end    
+    elseif class == "Spotify" then
+        c.floating = true
+    elseif class == "jetbrains-studio" then
+        local tag = awful.screen.focused().tags[2]
+        if tag ~= nil then
+            c:tags({tag})
+        end    
+        if c.skip_taskbar then
+            c.floating = true
+            awful.placement.centered(c)
+        end    
+    end
+    if name == "Origin" and c.skip_taskbar then
+        --c.hidden = true
+        --awful.placement.no_overlap(c)
+    elseif awesome.startup and
       not c.size_hints.user_position
       and not c.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
@@ -623,8 +691,10 @@ for s = 1, screen.count() do screen[s]:connect_signal("arrange", function ()
   local layout = awful.layout.getname(awful.layout.get(s))
 
   for _, c in pairs(clients) do
+    if c.class == "Steam" then
+          c.border_width = 0
+    elseif c.maximized then
     -- No borders with only one humanly visible client
-    if c.maximized then
       -- NOTE: also handled in focus, but that does not cover maximizing from a
       -- tiled state (when the client had focus).
       c.border_width = 0
@@ -651,7 +721,7 @@ end
 -- }}}
 
 client.connect_signal("property::floating", function (c)
-    if c.floating then
+    if c.floating and not c.skip_taskbar then
         awful.titlebar.show(c)
     else
         awful.titlebar.hide(c)

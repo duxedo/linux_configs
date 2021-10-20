@@ -26,13 +26,16 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
 fi
 
 run xfsettingsd
-run nm-applet
 run light-locker
-run compton --shadow-exclude '!focused'
 run xcape -e 'Super_L=Super_L|Control_L|Escape'
-run thunar --daemon
 run pa-applet
-run pamac-tray
+#run pamac-tray
 # blueman-applet and msm_notifier are not installed in minimal edition
 run blueman-applet
-run msm_notifier
+#run barrierc -n Aeon 192.168.100.5
+#run openvpn $HOME/work/mikhail.pletnev.ovpn &
+setxkbmap $(setxkbmap -query | grep "^layout:" | awk -F ": *" '{print $2}')
+#setx 1
+run qbittorrent
+run telegram-desktop
+run  redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5000
