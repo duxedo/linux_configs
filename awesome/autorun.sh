@@ -11,9 +11,9 @@ function run {
 if (command -v gnome-keyring-daemon && ! pgrep gnome-keyring-d); then
     gnome-keyring-daemon --daemonize --login &
 fi
-if (command -v start-pulseaudio-x11 && ! pgrep pulseaudio); then
-    start-pulseaudio-x11 &
-fi
+#if (command -v start-pulseaudio-x11 && ! pgrep pulseaudio); then
+#    start-pulseaudio-x11 &
+#fi
 if (command -v /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 && ! pgrep polkit-mate-aut) ; then
     /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &
 fi
@@ -35,6 +35,7 @@ run blueman-applet
 #run barrierc -n Aeon 192.168.100.5
 #run openvpn $HOME/work/mikhail.pletnev.ovpn &
 setxkbmap $(setxkbmap -query | grep "^layout:" | awk -F ": *" '{print $2}')
+setxkbmap -opion caps:ctrl_modifier
 #setx 1
 run qbittorrent
 run telegram-desktop

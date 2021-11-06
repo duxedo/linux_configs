@@ -252,8 +252,6 @@ awful.screen.connect_for_each_screen(function(s)
                     layout = wibox.layout.fixed.horizontal,
                     wibox.widget.systray(),
                     mykeyboardlayout,
-                    --powerline_widget,
-                    --gpmdp.widget,
                     textclock,
                     s.mylayoutbox,
                 },
@@ -269,6 +267,7 @@ root.buttons(gears.table.join(
     awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
+--
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
@@ -295,7 +294,6 @@ globalkeys = gears.table.join(
     ),
     awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
               {description = "show main menu", group = "awesome"}),
-
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
@@ -488,71 +486,82 @@ clientbuttons = gears.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise()
                  mymainmenu:hide() end),
     awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, function (c) awful.mouse.client.resize(c, "cornerse") end))
+    awful.button({ modkey }, 3, function (c) awful.mouse.client.resize(c) end))
 
 -- Set keys
 root.keys(globalkeys)
 -- }}}
-function inspect_client(c)
-    return '{' .. c.name .. ''
-end
-inspect = require('inspect')
-function dumpclients()
-    file = io.open("/home/reinhardt/awdump", "a")
-    file:write("begin")
-    for _, c in ipairs(client.get()) do
-        file:write(inspect(client.get()) .. '\n')
-    end
-    io.close(file)
-end 
+--
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
-    { rule = { },
-      except = { name = "Origin" },
-      properties = { border_width = beautiful.border_width,
-                     border_color = beautiful.border_normal,
-                     focus = awful.client.focus.filter,
-                     raise = true,
-                     keys = clientkeys,
-                     buttons = clientbuttons,
-                     size_hints_honor = false, -- Remove gaps between terminals
-                     screen = awful.screen.preferred,
-                     callback = awful.client.setslave,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
-     }
+    { 
+        rule = { },
+        except = { name = "Origin" },
+        properties = { 
+            border_width = beautiful.border_width,
+            border_color = beautiful.border_normal,
+            focus = awful.client.focus.filter,
+            raise = true,
+            keys = clientkeys,
+            buttons = clientbuttons,
+            size_hints_honor = false, -- Remove gaps between terminals
+            screen = awful.screen.preferred,
+            callback = awful.client.setslave,
+            placement = awful.placement.no_overlap+awful.placement.no_offscreen
+        }
     },
 
     -- Floating clients.
-    { rule_any = {
-        instance = {
-          "DTA",  -- Firefox addon DownThemAll.
-          "copyq",  -- Includes session name in class.
-        },
-        class = {
-          "Arandr",
-          "Gpick",
-          "Kruler",
-          "Sxiv",
-          "Steam",
-          "spotify",
-          "Shutter",
-          "KeePassXC",
-          "qBittorrent"
-        },
+    { 
+        rule_any = {
+            instance = {
+              "copyq",  -- Includes session name in class.
+            },
+            class = {
+              "Arandr",
+              "Sxiv",
+              "Steam",
+              "Spotify",
+              "Shutter",
+              "KeePassXC",
+              "qBittorrent",
+              "galaxyclient.exe",
+              "Lutris"
+            },
 
-        name = {
-          "Event Tester",  -- xev.
-          "Origin",   -- Origin client.
-          "Welcome to Android Studio",
-          "Android Virtual Device Manager" -- android studio AVD
-        },
-        role = {
-          "AlarmWindow",  -- Thunderbird's calendar.
-          "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
-        }
-      }, properties = { floating = true }},
+            name = {
+              "Event Tester",  -- xev.
+              "Origin",   -- Origin client.
+              "Welcome to Android Studio",
+              "Android Virtual Device Manager" -- android studio AVD
+            },
+            role = {
+              "AlarmWindow",  -- Thunderbird's calendar.
+              "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
+            }
+        }, 
+        properties = { floating = true }
+    },
+
+    { 
+        rule_any = {
+            class = {"TelegramDesktop", "Slack"}
+        }, 
+        properties = { tags = {awful.screen.focused().tags[7]} },
+    },
+
+    { 
+        rule = { class = "jetbrains-studio" },
+        properties = { tags = {awful.screen.focused().tags[2]}},
+        callback = function(c) 
+            if c.skip_taskbar then
+                c.floating = true
+                awful.placement.centered(c)
+            end    
+        end,
+    },
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" } },
@@ -564,11 +573,8 @@ awful.rules.rules = {
           awful.placement.centered(c, nil)
       end
     },
-    -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
-
-
+    { rule = { role = "_NET_WM_STATE_FULLSCREEN" },
+  properties = { floating = true } },
 }
 -- }}}
 
@@ -580,41 +586,7 @@ client.connect_signal("manage", function (c)
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
 
-    local class = c.class
     local name = c.name
-    local instance = c.instance
-    if class == nil then
-        class = "nil"
-    end    
-    if name == nil then
-        name = "nil"
-    end    
-    if instance == nil then
-        instance = "nil"
-    end    
-    -- naughty.notify({preset=naughty.config.presets.normal, title="debug", text=name .. "\n" .. class .. "\n" .. instance})
-    if class == "Slack" or class == "TelegramDesktop" then
-        local tag = awful.screen.focused().tags[7]
-        if tag ~= nil then
-            c:tags({tag})
-        end    
-    elseif class == "Firefox" then
-        local tag = awful.screen.focused().tags[1]
-        if tag ~= nil then
-            c:tags({tag})
-        end    
-    elseif class == "Spotify" then
-        c.floating = true
-    elseif class == "jetbrains-studio" then
-        local tag = awful.screen.focused().tags[2]
-        if tag ~= nil then
-            c:tags({tag})
-        end    
-        if c.skip_taskbar then
-            c.floating = true
-            awful.placement.centered(c)
-        end    
-    end
     if name == "Origin" and c.skip_taskbar then
         --c.hidden = true
         --awful.placement.no_overlap(c)
@@ -638,7 +610,7 @@ client.connect_signal("request::titlebars", function(c)
         awful.button({ }, 3, function()
             client.focus = c
             c:raise()
-            awful.mouse.client.resize(c)
+            awful.mouse.client.resize(c, nil, awful.placement.right)
         end)
     )
 
@@ -727,6 +699,11 @@ client.connect_signal("property::floating", function (c)
         awful.titlebar.hide(c)
     end
 end)
-
+awful.spawn.with_shell(
+       'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
+       'xrdb -merge <<< "awesome.started:true";' ..
+       -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
+       'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"' -- https://github.com/jceb/dex
+       )
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
