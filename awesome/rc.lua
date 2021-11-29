@@ -1,4 +1,5 @@
 -- Standard awesome library
+local capi = { key = key, root = root, awesome = awesome }
 local gears = require("gears")
 local awful = require("awful")
 require("awful.autofocus")
@@ -12,11 +13,6 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Lain
 local lain = require("lain")
--- GPMDP
---local gpmdp = require("gpmdp")
---Powerline
---package.path = package.path .. ';/usr/lib/python3.7/site-packages/powerline/bindings/awesome/?.lua'
---require('powerline')
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
@@ -29,7 +25,8 @@ if awesome.startup_errors then
                      title = "Oops, there were errors during startup!",
                      text = awesome.startup_errors })
 end
-
+naughty.config.presets.low.timeout = 10
+naughty.config.presets.normal.timeout = 10
 -- Handle runtime errors after startup
 do
     local in_error = false
@@ -52,9 +49,10 @@ presswait = { started = false }
 -- Themes define colours, icons, font and wallpapers.
 --beautiful.init(awful.util.getdir("config") .. "/themes/cesious/theme.lua")
 beautiful.init(awful.util.getdir("config") .. "/themes/zenburn/theme.lua")
-beautiful.notification_font = "Noto Sans Regular 9"
+beautiful.notification_font = "Noto Sans Regular 15"
 local theme = beautiful.get()
 
+local mywibox = require("mywibox")
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
 browser = "brave-bin"
@@ -84,18 +82,6 @@ awful.layout.layouts = {
 -- }}}
 
 -- {{{ Helper functions
-local function client_menu_toggle_fn()
-    local instance = nil
-
-    return function ()
-        if instance and instance.wibox.visible then
-            instance:hide()
-            instance = nil
-        else
-            instance = awful.menu.clients({ theme = { width = 250 } })
-        end
-    end
-end
 -- }}}
 
 
@@ -133,64 +119,6 @@ mymainmenu = freedesktop.menu.build({
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 
--- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
--- }}}
-
--- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
-
--- {{{ Wibar
-
-markup      = lain.util.markup
-darkblue    = theme.bg_focus
-blue        = "#9EBABA"
-red         = "#EB8F8F"
-seperator = wibox.widget.textbox(' <span color="' .. blue .. '">| </span>')
-spacer = wibox.widget.textbox(' <span color="' .. blue .. '"> </span>')
-
--- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
-                    awful.button({ modkey }, 1, function(t)
-                                              if client.focus then
-                                                  client.focus:move_to_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, function(t)
-                                              if client.focus then
-                                                  client.focus:toggle_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-                )
-
-local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  -- Without this, the following
-                                                  -- :isvisible() makes no sense
-                                                  c.minimized = false
-                                                  if not c:isvisible() and c.first_tag then
-                                                      c.first_tag:view_only()
-                                                  end
-                                                  -- This will also un-minimize
-                                                  -- the client, if needed
-                                                  client.focus = c
-                                                  c:raise()
-                                              end
-                                          end),
-                     awful.button({ }, 3, client_menu_toggle_fn()),
-                     awful.button({ }, 4, function ()
-                                              awful.tag.viewnext()
-                                          end),
-                     awful.button({ }, 5, function ()
-                                              awful.tag.viewprev()
-                                          end))
 
 local function set_wallpaper(s)
     -- Wallpaper
@@ -206,56 +134,9 @@ end
 
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
-
-local textclock = wibox.widget.textclock()
-local month_calendar = awful.widget.calendar_popup.month()
-month_calendar:attach(textclock, "tr")
-
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
-
-    -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "im" }, s, awful.layout.layouts[1])
-
-    -- Create a promptbox for each screen
-    s.mypromptbox = awful.widget.prompt()
-    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-    -- We need one layoutbox per screen.
-    s.mylayoutbox = awful.widget.layoutbox(s)
-    s.mylayoutbox:buttons(gears.table.join(
-                           awful.button({ }, 1, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 3, function () awful.layout.inc(-1) end),
-                           awful.button({ }, 4, function () awful.layout.inc( 1) end),
-                           awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
-	
-    -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
-
-    -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
-
-    -- Add widgets to the wibox
-    s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
-        { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-            seperator,
-        },
-        s.mytasklist, -- Middle widget
-        { -- Right widgets
-                    layout = wibox.layout.fixed.horizontal,
-                    wibox.widget.systray(),
-                    mykeyboardlayout,
-                    textclock,
-                    s.mylayoutbox,
-                },
-    }
 end)
 -- }}}
 
@@ -325,7 +206,18 @@ globalkeys = gears.table.join(
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
+    awful.key({ modkey, "Shift"   }, "q", function() 
+        naughty.notify({ preset = naughty.config.presets.critical,
+                         title = "Oops, an error happened!",
+                         text = "testErr" })
+        naughty.notify({ preset = naughty.config.presets.normal,
+                         title = "Oops, an error happened!",
+                         text = "testErr" })
+        naughty.notify({ preset = naughty.config.presets.low,
+                         title = "Oops, an error happened!",
+                         text = "testErr" })
+      --awesome.quit 
+    end,
               {description = "quit awesome", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)                 end,
@@ -360,7 +252,7 @@ globalkeys = gears.table.join(
               {description = "restore minimized", group = "client"}),
 
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
+    awful.key({ modkey },            "r",     function () awful.spawn("dmenu_run") end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "'",
