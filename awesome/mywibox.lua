@@ -5,6 +5,7 @@ local lain = require("lain")
 local beautiful = require("beautiful")
 local theme = beautiful.get()
 local gears = require("gears")
+local naughty = require("naughty")
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -78,7 +79,7 @@ local tasklist_buttons = gears.table.join(
 
 
 local textclock = wibox.widget.textclock()
-local month_calendar = awful.widget.calendar_popup.month()
+local month_calendar = awful.widget.calendar_popup.month({style_header = { border_width = 0}, style_weekday = { border_width = 0}, style_normal = { border_width = 0 }})
 langbox_timer = gears.timer {
         timeout = 0.5,
         callback = function ()
@@ -104,7 +105,7 @@ month_calendar:attach(textclock, "tr")
                                 show_langbox(true)
                               end);
 
-awful.screen.connect_for_each_screen(function(s)
+screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Each screen has its own tag table.
     awful.tag({ "1", "2", "3", "4", "5", "6", "im" }, s, awful.layout.layouts[1])
@@ -126,7 +127,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
 
     -- Create the wibox
-    s.mywibox = wibox({
+    s.mywibox = awful.wibar({
         position = "top",
         x = 0,
         y = 0,
@@ -135,8 +136,7 @@ awful.screen.connect_for_each_screen(function(s)
         screen = s, 
         ontop = true, 
         visible = false,
-        restrict_workarea = false,
-        type = "menu"
+        restrict_workarea = false
     })
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -164,6 +164,7 @@ awful.screen.connect_for_each_screen(function(s)
             (mouse.coords().y > 30)
            then  
              s.activation_zone.visible = true
+             s.activation_zone.input_passthrough = false
              s.mywibox.visible = false
              s.detect:stop()
            end  
@@ -173,6 +174,7 @@ awful.screen.connect_for_each_screen(function(s)
     s.enable_wibar = function ()
         s.mywibox.visible = true
         s.activation_zone.visible = false
+        s.activation_zone.input_passthrough = true
         if not s.detect.started then
           s.detect:start()
         end
@@ -211,4 +213,9 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         mykeyboardlayout,
     }
+end)
+
+
+screen.connect_signal("request::resize", function(s)
+    s.mywibox.width = s.geometry.width
 end)

@@ -5,10 +5,11 @@
 
 local themes_path = require("gears.filesystem").get_themes_dir()
 local current_path = require("awful").util.getdir("config") .. "/themes/zenburn"
+local rnotification = require("ruled.notification")
 local dpi = require("beautiful.xresources").apply_dpi
 
 -- {{{ Main
-theme = {}
+local theme = {}
 theme.wallpaper = current_path .. "/zenburn-background-5120.png"
 -- }}}
 
@@ -27,7 +28,7 @@ theme.bg_systray = theme.bg_normal
 
 -- {{{ Borders
 theme.useless_gap   = dpi(0)
-theme.border_width  = dpi(2)
+theme.border_width  = dpi(1)
 theme.border_normal = "#3F3F3F"
 theme.border_focus  = "#8F8FFF"
 theme.border_marked = "#CC9393"
@@ -56,7 +57,7 @@ theme.titlebar_bg_normal = "#3F3F3F"
 --theme.fg_center_widget = "#88A175"
 --theme.fg_end_widget    = "#FF5656"
 --theme.bg_widget        = "#494B4F"
---theme.border_widget    = "#3F3F3F"
+theme.border_widget    = "#000000"
 -- }}}
 
 -- {{{ Mouse finder
@@ -70,6 +71,7 @@ theme.mouse_finder_color = "#CC9393"
 -- menu_[border_color|border_width]
 theme.menu_height = dpi(15)
 theme.menu_width  = dpi(200)
+theme.menu_border_width = 0
 -- }}}
 
 -- {{{ Icons
@@ -133,6 +135,14 @@ theme.notification_max_width = 1080
 theme.notification_max_height = 500
 -- }}}
 -- }}}
+
+-- Set different colors for urgent notifications.
+rnotification.connect_signal('request::rules', function()
+    rnotification.append_rule {
+        rule       = { urgency = 'critical' },
+        properties = { bg = '#c4413d', fg = '#ffffff' }
+    }
+end)
 
 return theme
 
