@@ -33,7 +33,7 @@ beautiful.notification_font = "Noto Sans Regular 15"
 
 -- This is used later as the default terminal and editor to run.
 terminal = "kitty"
-browser = "brave-bin"
+browser = "firefox"
 filemanager = "fm"
 editor = "kitty v"
 modkey = "Mod4"
@@ -70,9 +70,10 @@ myawesomemenu = {
 }
 
 myexitmenu = {
-    { "log out", function() awesome.quit() end, "/usr/share/icons/breeze-dark/actions/22/system-log-out.svg" },
-    { "suspend", "systemctl suspend", "/usr/share/icons/breeze-dark/actions/22/system-suspend.svg" },
     { "hibernate", "systemctl hibernate", "/usr/share/icons/breeze-dark/actions/22/system-suspend-hibernate.svg" },
+    { "suspend", "systemctl suspend", "/usr/share/icons/breeze-dark/actions/22/system-suspend.svg" },
+    { "log out", function() awesome.quit() end, "/usr/share/icons/breeze-dark/actions/22/system-log-out.svg" },
+    { "", function() end, "" },
     { "reboot", "systemctl reboot", "/usr/share/icons/breeze-dark/actions/22/system-reboot.svg" },
     { "shutdown", "poweroff", "/usr/share/icons/breeze-dark/actions/22/system-shutdown.svg" }
 }
@@ -80,7 +81,7 @@ myexitmenu = {
 mymainmenu = freedesktop.menu.build({
     before = {
         { "Terminal", terminal, "/usr/share/icons/breeze-dark/apps/22/utilities-terminal.svg" },
-        { "Browser", browser, "/usr/share/icons/hicolor/128x128/apps/brave-bin.png" },
+        { "Browser", browser, "/usr/share/icons/hicolor/128x128/apps/firefox-bin.png" },
         { "Files", filemanager, "/usr/share/icons/Arc-Maia/places/32/user-home.png" },
         -- other triads can be put here
     },
