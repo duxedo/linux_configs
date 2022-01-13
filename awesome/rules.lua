@@ -36,7 +36,8 @@ ruled.client.connect_signal("request::rules", function()
               "KeePassXC",
               "qBittorrent",
               "galaxyclient.exe",
-              "Lutris"
+              "Lutris",
+              "battle.net.exe",
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -58,7 +59,7 @@ ruled.client.connect_signal("request::rules", function()
     ruled.client.append_rule {
         id = "im-clients",
         rule_any = {
-            class = {"TelegramDesktop", "Slack"}
+            class = {"TelegramDesktop", "Slack", "discord" }
         }, 
         properties = { tags = {awful.screen.focused().tags[7]} },
     }
