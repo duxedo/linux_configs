@@ -14,8 +14,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 
-markup      = lain.util.markup
-darkblue    = theme.bg_focus
 blue        = "#9EBABA"
 red         = "#EB8F8F"
 
