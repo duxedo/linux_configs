@@ -115,6 +115,35 @@ awful.keyboard.append_global_keybindings({
               end,
               {description = "restore minimized", group = "client"}),
 
+    awful.key({ modkey, "Shift" }, "n",
+              function ()
+                  awful.menu.clients (nil, nil, function(c)
+                    if c.minimized and not c.hidden then
+                      for _, tag in pairs(c:tags()) do
+                        if tag.selected then
+                          return true
+                        end
+                      end
+                      return false
+                    end
+                  end)
+              end,
+              {description = "restore minimized menu", group = "client"}),
+    awful.key({ modkey }, "c",
+              function ()
+                  awful.menu.clients (nil, nil, function(c)
+                    if c.minimized then
+                      return true
+                    end
+                    for _, tag in pairs(c:tags()) do
+                      if tag.selected then
+                        return false
+                      end
+                    end
+                    return true
+                  end)
+              end,
+              {description = "jump to hidden client", group = "client"}),
     -- Prompt
     awful.key({ modkey },            "r",     function () awful.spawn("dmenu_run") end,
               {description = "run prompt", group = "launcher"}),
