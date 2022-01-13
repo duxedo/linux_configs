@@ -39,4 +39,5 @@ setxkbmap -opion caps:ctrl_modifier
 #setx 1
 run qbittorrent
 run telegram-desktop
-run  redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5000
+run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
+run discord
