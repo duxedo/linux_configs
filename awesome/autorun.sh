@@ -25,19 +25,13 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
   system-config-printer-applet &
 fi
 
-run xfsettingsd
-run light-locker
 run xcape -e 'Super_L=Super_L|Control_L|Escape'
 run pa-applet
-#run pamac-tray
-# blueman-applet and msm_notifier are not installed in minimal edition
 run blueman-applet
-#run barrierc -n Aeon 192.168.100.5
-#run openvpn $HOME/work/mikhail.pletnev.ovpn &
-setxkbmap $(setxkbmap -query | grep "^layout:" | awk -F ": *" '{print $2}')
-setxkbmap -opion caps:ctrl_modifier
-#setx 1
 run qbittorrent
 run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run discord
+run kdeconnect-indicator
+dex --environment Qtile --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
+picom -b

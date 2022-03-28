@@ -126,15 +126,15 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Create the wibox
     s.mywibox = awful.wibar({
-        position = "top",
+        position = "bottom",
         x = 0,
         y = 0,
         width = s.geometry.width,
-        height = 30,
+        height = 20,
         screen = s, 
         ontop = true, 
-        visible = false,
-        restrict_workarea = false
+        visible = true,
+        restrict_workarea = true
     })
     -- Add widgets to the wibox
     s.mywibox:setup {

@@ -70,18 +70,7 @@ awful.keyboard.append_global_keybindings({
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", function() 
-        naughty.notify({ preset = naughty.config.presets.critical,
-                         title = "Oops, an error happened!",
-                         text = "testErr" })
-        naughty.notify({ preset = naughty.config.presets.normal,
-                         title = "Oops, an error happened!",
-                         text = "testErr" })
-        naughty.notify({ preset = naughty.config.presets.low,
-                         title = "Oops, an error happened!",
-                         text = "testErr" })
-      --awesome.quit 
-    end,
+    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)                 end,
@@ -145,7 +134,7 @@ awful.keyboard.append_global_keybindings({
               end,
               {description = "jump to hidden client", group = "client"}),
     -- Prompt
-    awful.key({ modkey },            "r",     function () awful.spawn("dmenu_run") end,
+    awful.key({ modkey },            "r",     function () awful.spawn("rofi -show run -matching regex -sorting-method fzf") end,
               {description = "run prompt", group = "launcher"}),
 
     awful.key({ modkey }, "'",
