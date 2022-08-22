@@ -4,10 +4,12 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
 
+
 ruled.client.connect_signal("request::rules", function()
     -- @DOC_GLOBAL_RULE@
     -- All clients will match this rule.
     ruled.client.append_rule {
+        
         id         = "global",
         rule       = { },
         except     = { name = "Origin" },
@@ -16,11 +18,9 @@ ruled.client.connect_signal("request::rules", function()
             raise     = true,
             --size_hints_honor = false, -- Remove gaps between terminals
             screen    = awful.screen.preferred,
-            placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-            callback  = awful.client.setslave
+           -- placement = awful.placement.no_overlap+awful.placement.no_offscreen,
         }
     }
-
     -- @DOC_FLOATING_RULE@
     -- Floating clients.
     ruled.client.append_rule {
@@ -61,7 +61,7 @@ ruled.client.connect_signal("request::rules", function()
         rule_any = {
             class = {"TelegramDesktop", "Slack", "discord" }
         }, 
-        properties = { tags = {awful.screen.focused().tags[7]} },
+        properties = { tags = {awful.screen.focused().tags[6]} },
     }
 
     ruled.client.append_rule {
@@ -93,12 +93,6 @@ ruled.client.connect_signal("request::rules", function()
             awful.placement.centered(c, nil)
         end
     }
-
-    ruled.client.append_rule {
-        id         = "dialogs",
-        rule       = { role = "_NET_WM_STATE_FULLSCREEN"  },
-        properties = { floating = true },
-    }
 end)
 
 -- Signal function to execute when a new client appears.
@@ -106,7 +100,6 @@ client.connect_signal("request::manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
-
     local name = c.name
     if name == "Origin" and c.skip_taskbar then
         --c.hidden = true
@@ -115,7 +108,7 @@ client.connect_signal("request::manage", function (c)
       not c.size_hints.user_position
       and not c.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
-        awful.placement.no_offscreen(c)
+      --  awful.placement.no_offscreen(c)
     end
 end)
 

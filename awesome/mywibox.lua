@@ -94,19 +94,19 @@ function show_langbox(show)
 end
 month_calendar:attach(textclock, "tr")
 
-  awesome.connect_signal("xkb::map_changed",
-                              function ()
-                                show_langbox(true)
-                              end)
-  awesome.connect_signal("xkb::group_changed",
-                              function () 
-                                show_langbox(true)
-                              end);
+awesome.connect_signal("xkb::map_changed",
+                          function ()
+                            show_langbox(true)
+                          end)
+awesome.connect_signal("xkb::group_changed",
+                          function () 
+                            show_langbox(true)
+                          end);
 
 screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "im" }, s, awful.layout.layouts[1])
+    awful.tag({ "1", "2", "3", "q", "w", "e"}, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -122,78 +122,79 @@ screen.connect_signal("request::desktop_decoration", function(s)
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
 	
     -- Create a tasklist widget
-    s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, tasklist_buttons)
+    s.mytasklist = awful.widget.tasklist{
+        screen = s,
+        filter = awful.widget.tasklist.filter.currenttags,
+        buttons = tasklist_buttons,
+        layout = {
+            layout = wibox.layout.fixed.vertical,
+            forced_height = 25
+        },
+        style = {
+            shape_border_width = 1,
+            shape_border_color  = "#1A1A1A",
+            shape = function(cr, width, height)
+                gears.shape.partially_rounded_rect(cr, width, height, true, false, true, false, 20)
+            end
+        },
+        widget_template = {
+            {
+                {
+                    awful.widget.clienticon,
+                    margins = 5,
+                    widget  = wibox.container.margin,
+                    forced_width = 40
+                },
+                {
+                    id     = 'text_role',
+                    widget = wibox.widget.textbox,
+                    wrap = "char"
+                },
+                layout = wibox.layout.fixed.horizontal,
+            },
+            id            = "background_role",
+            widget        = wibox.container.background,
+            forced_height = 75,
+        },
+    }
 
     -- Create the wibox
     s.mywibox = awful.wibar({
-        position = "bottom",
+        position = "left",
         x = 0,
         y = 0,
-        width = s.geometry.width,
-        height = 20,
+        width = 150,
+        height = s.geometry.height,
         screen = s, 
-        ontop = true, 
         visible = true,
-        restrict_workarea = true
     })
     -- Add widgets to the wibox
     s.mywibox:setup {
-        layout = wibox.layout.align.horizontal,
+        layout = wibox.layout.align.vertical,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             mylauncher,
             s.mytaglist,
             s.mypromptbox,
-            seperator,
+            forced_height = 25
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
-                    layout = wibox.layout.fixed.horizontal,
-                    wibox.widget.systray(),
-                    mykeyboardlayout,
-                    textclock,
-                    s.mylayoutbox,
-                },
-    }
-    s.detect = gears.timer {
-        timeout = 0.5,
-        callback = function ()
-          if (mouse.screen ~= s) or
-            (mouse.coords().y > 30)
-           then  
-             s.activation_zone.visible = true
-             s.activation_zone.input_passthrough = false
-             s.mywibox.visible = false
-             s.detect:stop()
-           end  
-        end
+            layout = wibox.layout.fixed.vertical,
+            {
+                layout = wibox.layout.fixed.horizontal,
+                mykeyboardlayout,
+                wibox.widget.systray(),
+            },
+            {
+                layout = wibox.layout.fixed.horizontal,
+                forced_height = 25,
+                s.mylayoutbox,
+                textclock,
+            },
+        },
     }
 
-    s.enable_wibar = function ()
-        s.mywibox.visible = true
-        s.activation_zone.visible = false
-        s.activation_zone.input_passthrough = true
-        if not s.detect.started then
-          s.detect:start()
-        end
-    end
-
-    s.activation_zone = wibox ({
-        x = s.geometry.x, y = s.geometry.y,
-        opacity = 0.0, width = s.geometry.width, height = 1,
-        screen = s, input_passthrough = false, visible = true,
-        ontop = true, type = "dock",
-    })
-
-    s.activation_zone:connect_signal("mouse::enter", function ()
-        s.detect:stop()
-        s.enable_wibar()
-    end)
-
-   -- s.mywibox:connect_signal("mouse::leave", function()
-   --     s.detect:start()
-   -- end)
-    
     s.langbox = wibox(
     {
         position = "top",
@@ -203,7 +204,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         height = 20,
         screen = s, 
         ontop = true, 
-        visible = true,
+        visible = false,
         restrict_workarea = false,
         type = "menu"
     })

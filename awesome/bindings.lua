@@ -33,8 +33,6 @@ awful.keyboard.append_global_keybindings({
         end,
         {description = "focus previous by index", group = "client"}
     ),
-    awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-              {description = "show main menu", group = "awesome"}),
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
               {description = "swap with next client by index", group = "client"}),
@@ -60,17 +58,13 @@ awful.keyboard.append_global_keybindings({
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey,           }, "u", function () awful.spawn("setx 1") end,
-              {description = "5120x1440", group = "launcher"}),
-    awful.key({ modkey,           }, "i", function () awful.spawn("setx 2") end,
-              {description = "2560x1440", group = "launcher"}),
     awful.key({ modkey, "Mod1"    }, "l", function () awful.spawn("xscreensaver-command -lock") end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey,           }, "z", function () awful.spawn(terminal) end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Shift"   }, "q", awesome.quit,
+    awful.key({ modkey, "Control"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
 
     awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)                 end,
@@ -89,8 +83,6 @@ awful.keyboard.append_global_keybindings({
               {description = "launch Browser", group = "launcher"}),
     awful.key({ modkey, "Control"}, "Escape", function () awful.spawn("/usr/bin/rofi -show drun -modi drun") end,
               {description = "launch rofi", group = "launcher"}),
-    awful.key({ modkey,           }, "e", function () awful.spawn(filemanager)            end,
-              {description = "launch filemanager", group = "launcher"}),
     awful.key({ modkey, "Shift"   }, "space", function () awful.layout.inc(-1)                       end,
               {description = "select previous", group = "layout"}),
     awful.key({ modkey, "Control" }, "n",
@@ -153,15 +145,15 @@ awful.keyboard.append_global_keybindings({
               
 })
 
-awful.keyboard.append_global_keybindings({
-    awful.key({ modkey, "Shift"           }, "w",      function()
-  for s in screen do
-    s.activation_zone.visible = not s.activation_zone.visible
-  end
-end
-,
-              {description="disable wibar autoshow", group="awesome"}),
-            })
+--awful.keyboard.append_global_keybindings({
+        --awful.key({ modkey, "Shift"           }, "w",      function()
+          --for s in screen do
+            --s.activation_zone.visible = not s.activation_zone.visible
+          --end
+            --end ,
+              --{description="disable wibar autoshow", group="awesome"}),
+            --})
+
 client.connect_signal("request::default_keybindings", function()
     awful.keyboard.append_client_keybindings({
         awful.key({ modkey,           }, "f",
@@ -218,10 +210,19 @@ client.connect_signal("request::default_keybindings", function()
     })
 end)
 
+awful.key.keygroups["tags"] = {
+    {"#10", 1},
+    {"#11", 2},
+    {"#12", 3},
+    {"#24", 4},
+    {"#25", 5},
+    {"#26", 6},
+}
+
 awful.keyboard.append_global_keybindings({
     awful.key {
         modifiers   = { modkey },
-        keygroup    = "numrow",
+        keygroup    = "tags",
         description = "only view tag",
         group       = "tag",
         on_press    = function (index)
@@ -234,7 +235,7 @@ awful.keyboard.append_global_keybindings({
     },
     awful.key {
         modifiers   = { modkey, "Control" },
-        keygroup    = "numrow",
+        keygroup    = "tags",
         description = "toggle tag",
         group       = "tag",
         on_press    = function (index)
@@ -247,7 +248,7 @@ awful.keyboard.append_global_keybindings({
     },
     awful.key {
         modifiers = { modkey, "Shift" },
-        keygroup    = "numrow",
+        keygroup    = "tags",
         description = "move focused client to tag",
         group       = "tag",
         on_press    = function (index)
@@ -261,7 +262,7 @@ awful.keyboard.append_global_keybindings({
     },
     awful.key {
         modifiers   = { modkey, "Control", "Shift" },
-        keygroup    = "numrow",
+        keygroup    = "tags",
         description = "toggle focused client on tag",
         group       = "tag",
         on_press    = function (index)

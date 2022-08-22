@@ -93,7 +93,7 @@ mymainmenu = freedesktop.menu.build({
 })
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
+                                     menu = mymainmenu, upscale = false, forced_height = 50, forced_width = 50})
 menubar.utils.terminal = terminal
 
 require("mywibox")
@@ -118,7 +118,15 @@ screen.connect_signal("request::wallpaper", function(s)
     }
 end)
 
-
+client.connect_signal("property::fullscreen", function(c)
+  if c.fullscreen then
+    gears.timer.delayed_call(function()
+      if c.valid then
+        c:geometry(c.screen.geometry)
+      end
+    end)
+  end
+end)
 
 awful.spawn.with_shell(
        'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
