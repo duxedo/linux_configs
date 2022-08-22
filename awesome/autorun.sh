@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-## run (only once) processes which spawn with the same name
+#!/bin/sh
 function run {
    if (command -v $1 && ! pgrep $1); then
      $@&
@@ -28,10 +26,14 @@ fi
 run xcape -e 'Super_L=Super_L|Control_L|Escape'
 run pa-applet
 run blueman-applet
-run qbittorrent
 run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run discord
 run kdeconnect-indicator
 dex --environment Qtile --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 picom -b
+#run qbittorrent &
+run deluge &
+sleep 1
+#xscreensaver-command -lock &
+#dm-tool lock
