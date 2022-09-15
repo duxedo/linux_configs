@@ -129,6 +129,9 @@ awful.keyboard.append_global_keybindings({
     awful.key({ modkey },            "r",     function () awful.spawn("rofi -show run -matching regex -sorting-method fzf") end,
               {description = "run prompt", group = "launcher"}),
 
+    awful.key({ modkey , "Shift" },            "r",     function () awful.spawn("rofi -show drun -matching regex -sorting-method fzf") end,
+              {description = "run prompt", group = "launcher"}),
+
     awful.key({ modkey }, "'",
               function ()
                   awful.prompt.run {
@@ -168,8 +171,6 @@ client.connect_signal("request::default_keybindings", function()
                 {description = "toggle floating", group = "client"}),
         awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end,
                 {description = "move to master", group = "client"}),
-        awful.key({ modkey,           }, "o",      function (c) c:move_to_screen()               end,
-                {description = "move to screen", group = "client"}),
         awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end,
                 {description = "toggle keep on top", group = "client"}),
         awful.key({ modkey,           }, "n",
@@ -256,6 +257,21 @@ awful.keyboard.append_global_keybindings({
                 local tag = client.focus.screen.tags[index]
                 if tag then
                     client.focus:move_to_tag(tag)
+                end
+            end
+        end,
+    },
+    awful.key {
+        modifiers = { modkey, "Mod1" },
+        keygroup    = "tags",
+        description = "move focused client to tag and switch to that tag",
+        group       = "tag",
+        on_press    = function (index)
+            if client.focus then
+                local tag = client.focus.screen.tags[index]
+                if tag then
+                    client.focus:move_to_tag(tag)
+                    tag:view_only()
                 end
             end
         end,
