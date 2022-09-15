@@ -6,6 +6,9 @@ local beautiful = require("beautiful")
 local theme = beautiful.get()
 local gears = require("gears")
 local naughty = require("naughty")
+local constants = require("constants")
+
+local weather_widget = require("awesome-wm-widgets.weather-widget.weather")
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -67,6 +70,9 @@ local tasklist_buttons = gears.table.join(
                                                   c:raise()
                                               end
                                           end),
+                     awful.button({ }, 2, function(c) 
+                        c:kill()
+                     end),
                      awful.button({ }, 3, client_menu_toggle_fn()),
                      awful.button({ }, 4, function ()
                                               awful.tag.viewnext()
@@ -92,7 +98,7 @@ function show_langbox(show)
       langbox_timer:start()
     end
 end
-month_calendar:attach(textclock, "tr")
+month_calendar:attach(textclock, "bl")
 
 awesome.connect_signal("xkb::map_changed",
                           function ()
@@ -119,7 +125,11 @@ screen.connect_signal("request::desktop_decoration", function(s)
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
     -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, taglist_buttons)
+    s.mytaglist = awful.widget.taglist{
+        screen = s, 
+        filter = awful.widget.taglist.filter.all, 
+        buttons = taglist_buttons
+    }
 	
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist{
@@ -131,26 +141,38 @@ screen.connect_signal("request::desktop_decoration", function(s)
             forced_height = 25
         },
         style = {
-            shape_border_width = 1,
-            shape_border_color  = "#1A1A1A",
+            shape_border_width = 2,
+            shape_border_color  = "#4A4A4A",
             shape = function(cr, width, height)
-                gears.shape.partially_rounded_rect(cr, width, height, true, false, true, false, 20)
+                gears.shape.partially_rounded_rect(cr, width, height, true, false, true, false, 10)
             end
         },
         widget_template = {
             {
                 {
-                    awful.widget.clienticon,
-                    margins = 5,
-                    widget  = wibox.container.margin,
-                    forced_width = 40
+                    layout = wibox.layout.align.horizontal,
+                    nil,
+                    nil,
+                    {
+                        awful.widget.clienticon,
+                        margins = 5,
+                        widget  = wibox.container.margin,
+                        forced_width = 30,
+                        forced_height = 30
+                    },
                 },
                 {
-                    id     = 'text_role',
-                    widget = wibox.widget.textbox,
-                    wrap = "char"
+                    {
+                        id     = 'text_role',
+                        widget = wibox.widget.textbox,
+                        wrap = "char",
+                    },
+                    widget = function(widget) 
+                        wig =  wibox.container.margin(widget, 5 ,5)
+                        return wig
+                    end
                 },
-                layout = wibox.layout.fixed.horizontal,
+                layout = wibox.layout.fixed.vertical,
             },
             id            = "background_role",
             widget        = wibox.container.background,
@@ -163,33 +185,47 @@ screen.connect_signal("request::desktop_decoration", function(s)
         position = "left",
         x = 0,
         y = 0,
-        width = 150,
+        width = 110,
         height = s.geometry.height,
         screen = s, 
         visible = true,
+        opacity = 0.7
     })
     -- Add widgets to the wibox
     s.mywibox:setup {
+        
         layout = wibox.layout.align.vertical,
         { -- Left widgets
-            layout = wibox.layout.fixed.horizontal,
-            mylauncher,
-            s.mytaglist,
-            s.mypromptbox,
-            forced_height = 25
+            layout = wibox.layout.fixed.vertical,
+            {
+                layout = wibox.layout.fixed.horizontal,
+                s.mytaglist,
+                forced_height = 20
+            },
         },
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.vertical,
             {
-                layout = wibox.layout.fixed.horizontal,
+                layout = wibox.layout.align.horizontal,
+                s.mylayoutbox,
+                weather_widget({
+                    api_key=constants.weather_api_key,
+                    coordinates = {60.004, 30.324},
+                    show_hourly_forecast = true,
+                    show_daily_forecast = true,
+                }),
                 mykeyboardlayout,
-                wibox.widget.systray(),
+                forced_height = 25,
+            },
+            {
+                widget = wibox.widget.systray,
+                horizontal = true,
+                base_size = 25
             },
             {
                 layout = wibox.layout.fixed.horizontal,
                 forced_height = 25,
-                s.mylayoutbox,
                 textclock,
             },
         },
@@ -198,8 +234,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
     s.langbox = wibox(
     {
         position = "top",
-        x = s.geometry.width - 40,
-        y = 20,
+        x = 40,
+        y = s.geometry.height - 40,
         width = 20,
         height = 20,
         screen = s, 
