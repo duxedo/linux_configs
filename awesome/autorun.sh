@@ -9,9 +9,6 @@ function run {
 if (command -v gnome-keyring-daemon && ! pgrep gnome-keyring-d); then
     gnome-keyring-daemon --daemonize --login &
 fi
-#if (command -v start-pulseaudio-x11 && ! pgrep pulseaudio); then
-#    start-pulseaudio-x11 &
-#fi
 if (command -v /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 && ! pgrep polkit-mate-aut) ; then
     /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &
 fi
@@ -30,8 +27,10 @@ run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run discord
 run kdeconnect-indicator
-dex --environment Qtile --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
-picom -b
+dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
+if (command -v picom && ! pgrep picom); then
+    picom -b &
+fi
 #run qbittorrent &
 run deluge &
 sleep 1
