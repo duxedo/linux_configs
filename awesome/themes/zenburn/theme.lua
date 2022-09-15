@@ -10,7 +10,8 @@ local dpi = require("beautiful.xresources").apply_dpi
 
 -- {{{ Main
 local theme = {}
-theme.wallpaper = current_path .. "/zenburn-background-5120.png"
+--theme.wallpaper = current_path .. "/zenburn-background-5120.png"
+theme.wallpaper = "/home/reinhardt/.config/wallpapers/2043630.png"
 -- }}}
 
 -- {{{ Styles
@@ -20,15 +21,16 @@ theme.font      = "Noto Sans 9"
 theme.fg_normal  = "#DCDCCC"
 theme.fg_focus   = "#F0DFAF"
 theme.fg_urgent  = "#CC9393"
-theme.bg_normal  = "#3F3F3F"
-theme.bg_focus   = "#1E2320"
+theme.bg_normal  = "#2F2F2F"
+theme.bg_focus   = "#101010"
 theme.bg_urgent  = "#3F3F3F"
 theme.bg_systray = theme.bg_normal
+theme.systray_max_rows = 3
 -- }}}
 
 -- {{{ Borders
 theme.useless_gap   = dpi(0)
-theme.border_width  = dpi(1)
+theme.border_width  = dpi(2)
 theme.border_normal = "#3F3F3F"
 theme.border_focus  = "#8F8FFF"
 theme.border_marked = "#CC9393"
