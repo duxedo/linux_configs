@@ -38,6 +38,7 @@ ruled.client.connect_signal("request::rules", function()
               "galaxyclient.exe",
               "Lutris",
               "battle.net.exe",
+              "calc"
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -62,6 +63,14 @@ ruled.client.connect_signal("request::rules", function()
             class = {"TelegramDesktop", "Slack", "discord" }
         }, 
         properties = { tags = {awful.screen.focused().tags[6]} },
+    }
+
+    ruled.client.append_rule {
+        id = "game-launchers",
+        rule_any = {
+            class = {"Steam", "Lutris", "battle.net.exe", "Origin" }
+        }, 
+        properties = { tags = {awful.screen.focused().tags[4]} },
     }
 
     ruled.client.append_rule {
@@ -109,7 +118,10 @@ client.connect_signal("request::manage", function (c)
       and not c.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
       --  awful.placement.no_offscreen(c)
+    else
+        awful.client.setslave(c)
     end
+
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
