@@ -20,6 +20,9 @@ functions = {}
 
 naughty.config.presets.low.timeout = 10
 naughty.config.presets.normal.timeout = 10
+naughty.config.defaults.position = "bottom_right"
+naughty.config.defaults.timeout = 10
+naughty.config.padding = 50
 naughty.connect_signal("request::display_error", function(message, startup)
     naughty.notification {
         urgency = "critical",
@@ -130,9 +133,11 @@ end)
 
 awful.spawn.with_shell(
        'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
-       'xrdb -merge <<< "awesome.started:true";' ..
+       'xrdb -merge <<< "awesome.started:true";'
        -- list each of your autostart commands, followed by ; inside single quotes, followed by ..
-       'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"' -- https://github.com/jceb/dex
        )
 awful.spawn.with_shell("~/.config/awesome/autorun.sh")
 
+client.connect_signal("mouse::enter", function(c)
+    c:activate { context = "mouse_enter", raise = false }
+end)
