@@ -67,15 +67,15 @@ awful.keyboard.append_global_keybindings({
     awful.key({ modkey, "Control"   }, "q", awesome.quit,
               {description = "quit awesome", group = "awesome"}),
 
-    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)                 end,
+    awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05) end,
               {description = "increase master width factor", group = "layout"}),
-    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)                 end,
+    awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05) end,
               {description = "decrease master width factor", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true)        end,
+    awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
               {description = "increase the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true)        end,
+    awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
               {description = "decrease the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true)           end,
+    awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true) end,
               {description = "increase the number of columns", group = "layout"}),
     awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)           end,
               {description = "decrease the number of columns", group = "layout"}),
@@ -143,8 +143,16 @@ awful.keyboard.append_global_keybindings({
               end,
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+    awful.key({ modkey }, "Print", function () awful.spawn("flameshot gui") end,
+              {description = "flameshot", group = "launcher"}),
+    awful.key({ modkey , "Mod1" }, "Print", function () awful.spawn("sh -c \"flameshot gui --delay 3000\"") end,
+              {description = "flameshot with 3s delay", group = "launcher"}),
+    awful.key({ modkey , "Shift" }, "Print", function () awful.spawn("flameshot full --clipboard") end,
+              {description = "flameshot fullscreen to clipboard"}),
+    awful.key({ modkey }, "p", function () awful.spawn("keepassxc") end,
+              {description = "keepass"}),
+    awful.key({ modkey }, "o", function () awful.spawn("sh -c \"sleep 3; xprop > ~/xpr\"") end,
+              {description = "write xprop to ~/xpr in 3 seconds"}),
               
 })
 
