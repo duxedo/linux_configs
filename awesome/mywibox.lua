@@ -168,16 +168,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 {
                     {
                         id     = 'text_role',
-                        widget = function()
-                            widget = wibox.widget.textbox()
-                            widget.ellipsize = "middle"
-                            tooltip:add_to_object(widget)
-                            widget:connect_signal('mouse::enter' , function(self)
-                                tooltip.text = self.text
-                            end)
-                            return widget
-                        end
-                            ,
+                        widget = wibox.widget.textbox,
                         wrap = "char",
                     },
                     widget = function(widget) 
@@ -188,7 +179,14 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 layout = wibox.layout.fixed.vertical,
             },
             id            = "background_role",
-            widget        = wibox.container.background,
+            widget        = function(widget)
+                widget = wibox.container.background(widget)
+                tooltip:add_to_object(widget)
+                widget:connect_signal('mouse::enter' , function(self)
+                    tooltip.text = self:get_children_by_id('text_role')[1].text
+                end)
+                return widget
+            end,
             forced_height = 75,
         },
     }
