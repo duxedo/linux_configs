@@ -164,7 +164,12 @@ screen.connect_signal("request::desktop_decoration", function(s)
                 {
                     {
                         id     = 'text_role',
-                        widget = wibox.widget.textbox,
+                        widget = function()
+                            widget = wibox.widget.textbox()
+                            widget.ellipsize = "middle"
+                            return widget
+                        end
+                            ,
                         wrap = "char",
                     },
                     widget = function(widget) 
