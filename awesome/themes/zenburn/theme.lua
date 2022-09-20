@@ -32,7 +32,7 @@ theme.systray_max_rows = 3
 theme.useless_gap   = dpi(0)
 theme.border_width  = dpi(2)
 theme.border_normal = "#3F3F3F"
-theme.border_focus  = "#8F8FFF"
+theme.border_focus  = "#e5961e"
 theme.border_marked = "#CC9393"
 -- }}}
 
