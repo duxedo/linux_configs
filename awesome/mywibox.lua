@@ -84,6 +84,7 @@ local tasklist_buttons = gears.table.join(
 
 local textclock = wibox.widget.textclock()
 local month_calendar = awful.widget.calendar_popup.month({style_header = { border_width = 0}, style_weekday = { border_width = 0}, style_normal = { border_width = 0 }})
+
 langbox_timer = gears.timer {
         timeout = 0.5,
         callback = function ()
@@ -124,13 +125,16 @@ screen.connect_signal("request::desktop_decoration", function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+    
+
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist{
         screen = s, 
         filter = awful.widget.taglist.filter.all, 
         buttons = taglist_buttons
     }
-	
+
+    local tooltip = awful.tooltip {}
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist{
         screen = s,
@@ -167,13 +171,17 @@ screen.connect_signal("request::desktop_decoration", function(s)
                         widget = function()
                             widget = wibox.widget.textbox()
                             widget.ellipsize = "middle"
+                            tooltip:add_to_object(widget)
+                            widget:connect_signal('mouse::enter' , function(self)
+                                tooltip.text = self.text
+                            end)
                             return widget
                         end
                             ,
                         wrap = "char",
                     },
                     widget = function(widget) 
-                        wig =  wibox.container.margin(widget, 5 ,5)
+                        wig =  wibox.container.margin(widget, 5, 5)
                         return wig
                     end
                 },
