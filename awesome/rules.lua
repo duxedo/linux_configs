@@ -70,7 +70,7 @@ ruled.client.connect_signal("request::rules", function()
         rule_any = {
             class = {"Steam", "Lutris", "battle.net.exe", "Origin" }
         }, 
-        properties = { tags = {awful.screen.focused().tags[4]} },
+        properties = { tags = {awful.screen.focused().tags[2]} },
     }
 
     ruled.client.append_rule {
@@ -78,7 +78,7 @@ ruled.client.connect_signal("request::rules", function()
         rule_any = {
             class = {"jetbrains-studio"}
         }, 
-        properties = { tags = {awful.screen.focused().tags[2]}},
+        properties = { tags = {awful.screen.focused().tags[3]}},
         callback = function(c) 
             if c.skip_taskbar then
                 c.floating = true
