@@ -60,7 +60,7 @@ ruled.client.connect_signal("request::rules", function()
     ruled.client.append_rule {
         id = "im-clients",
         rule_any = {
-            class = {"TelegramDesktop", "Slack", "discord" }
+            class = {"TelegramDesktop", "Slack", "discord", "signal" }
         }, 
         properties = { tags = {awful.screen.focused().tags[6]} },
     }
@@ -148,7 +148,7 @@ client.connect_signal("request::titlebars", function(c)
         },
         { -- Middle
             { -- Title
-                align  = "center",
+                halign  = "center",
                 widget = awful.titlebar.widget.titlewidget(c)
             },
             buttons = buttons,
