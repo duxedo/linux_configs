@@ -8,13 +8,14 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-local naughty = require("naughty")
+naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Lain
 local lain = require("lain")
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
+local ruled = require("ruled")
 
 functions = {}
 
@@ -29,6 +30,33 @@ naughty.connect_signal("request::display_error", function(message, startup)
         title   = "Oops, an error happened"..(startup and " during startup!" or "!"),
         message = message
     }
+end)
+
+
+ruled.notification.connect_signal('request::rules', function()
+    -- All notifications will match this rule.
+    ruled.notification.append_rule {
+        rule       = { },
+        properties = {
+            screen           = awful.screen.preferred,
+            implicit_timeout = 5,
+        }
+    }
+end)
+
+-- pactl get-sink-volume `pactl get-default-sink` | cut -sd/  -f2 | xargs
+
+naughty.connect_signal("request::display", function(n, context, args)
+    naughty.layout.box { notification = n }
+    if(args.app_name == "pa-applet") then
+       -- n.title = "Volume"
+        --n.message = "Volume"
+        n:connect_signal("property::message", function (self, val) 
+            if val ~= "Volume2" then
+                self.title = "Volume2"
+            end
+        end)
+    end
 end)
 
 beautiful.init(awful.util.getdir("config") .. "/themes/zenburn/theme.lua")
@@ -57,6 +85,7 @@ tag.connect_signal("request::default_layouts", function()
       -- awful.layout.suit.max.fullscreen,
       -- awful.layout.suit.magnifier,
        awful.layout.suit.corner.nw,
+       lain.layout.termfair,
       -- awful.layout.suit.corner.ne,
       -- awful.layout.suit.corner.sw,
       -- awful.layout.suit.corner.se,
