@@ -27,12 +27,14 @@ run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run discord
 run kdeconnect-indicator
-dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 if (command -v picom && ! pgrep picom); then
     picom -b &
 fi
-#run qbittorrent &
+if (command -v signal-desktop && ! pgrep signal-desktop); then
+    signal-desktop --start-in-tray &
+fi
 run deluge &
 sleep 1
+dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 #xscreensaver-command -lock &
 #dm-tool lock
