@@ -113,8 +113,33 @@ awesome.connect_signal("xkb::group_changed",
 screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
-
+    --awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
+    
+    awful.tag.add("1", {
+        layout = awful.layout.suit.tile,
+        screen = s,
+    }):view_only()
+    awful.tag.add("q", {
+        layout = awful.layout.suit.tile,
+        screen = s,
+    })
+    awful.tag.add("2", {
+        layout = awful.layout.suit.tile,
+        screen = s,
+    })
+    awful.tag.add("w", {
+        layout = awful.layout.suit.tile,
+        screen = s,
+    })
+    awful.tag.add("3", {
+        layout = awful.layout.suit.tile,
+        screen = s,
+    })
+    awful.tag.add("e", {
+        layout = lain.layout.termfair,
+        screen = s,
+        master_count = 3,
+    })
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
@@ -131,7 +156,10 @@ screen.connect_signal("request::desktop_decoration", function(s)
     s.mytaglist = awful.widget.taglist{
         screen = s, 
         filter = awful.widget.taglist.filter.all, 
-        buttons = taglist_buttons
+        buttons = taglist_buttons,
+        layout  = {
+            layout = wibox.layout.flex.horizontal,
+        }
     }
 
     local tooltip = awful.tooltip {}
@@ -209,7 +237,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         { -- Left widgets
             layout = wibox.layout.fixed.vertical,
             {
-                layout = wibox.layout.fixed.horizontal,
+                layout = wibox.layout.flex.horizontal,
                 s.mytaglist,
                 forced_height = 20
             },
