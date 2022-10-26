@@ -1,81 +1,24 @@
 local awful = require("awful")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local menubar = require("menubar")
+local const = require("constants")
+local ut = require("utils")
 -- {{{ Mouse bindings
 awful.mouse.append_global_mousebindings({
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
-    awful.button({ }, 4, awful.tag.viewprev),
-    awful.button({ }, 5, awful.tag.viewnext),
+    --awful.button({ }, 3, function () mymainmenu:toggle() end),
+    --awful.button({ }, 4, awful.tag.viewprev),
+    --awful.button({ }, 5, awful.tag.viewnext),
 })
 -- }}}
 --
+modkey = const.modkey
 
-function f_prevfocus()
-    awful.client.focus.history.previous()
-    if client.focus then
-        client.focus:raise()
-    end
-end
 
-function f_restore_last_minimized()
-    local c = awful.client.restore()
-    -- Focus restored client
-    if c then
-        client.focus = c
-        c:raise()
-    end
-end
-
-function f_restore_minimized_menu()
-    awful.menu.clients (nil, nil, function(c)
-      if c.minimized and not c.hidden then
-        for _, tag in pairs(c:tags()) do
-          if tag.selected then
-            return true
-          end
-        end
-        return false
-      end
-    end)
-end
-
-function f_jump_to_hidden_client()
-    awful.menu.clients (nil, nil, function(c)
-      if c.minimized then
-        return true
-      end
-      for _, tag in pairs(c:tags()) do
-        if tag.selected then
-          return false
-        end
-      end
-      return true
-    end)
-end
-
-function f_rofi_default () awful.spawn("rofi -show run -matching regex -sorting-method fzf") end
-
-function f_rofi_freedesktop () awful.spawn("rofi -show drun -matching regex -sorting-method fzf") end
-
-function f_lua_prompt()
-    awful.prompt.run {
-      prompt       = "Run Lua code: ",
-      textbox      = awful.screen.focused().mypromptbox.widget,
-      exe_callback = awful.util.eval,
-      history_path = awful.util.get_cache_dir() .. "/history_eval"
-    }
-end
-
-function f_spawn(cmd)
-    return function() awful.spawn(cmd) end
-end
 
 -- {{{ Key bindings
 awful.keyboard.append_global_keybindings({
     awful.key({ modkey }, "s"                , hotkeys_popup.show_help                              , {description="show help", group="awesome"}),
-    --awful.key({ modkey }, "Left"             , awful.tag.viewprev                                   , {description = "view previous", group = "tag"}),
-    --awful.key({ modkey }, "Right"            , awful.tag.viewnext                                   , {description = "view next", group = "tag"}),
-    awful.key({ modkey }, "Escape"           , awful.tag.history.restore                            , {description = "go back", group = "tag"}),
+    awful.key({ modkey }, "Escape"           , function() awful.tag.history.restore(nil, 1) end     , {description = "go back", group = "tag"}),
     awful.key({ modkey }, "j"                , function () awful.client.focus.byidx( 1) end         , {description = "focus next by index", group = "client"}),
     awful.key({ modkey }, "k"                , function () awful.client.focus.byidx(-1) end         , {description = "focus previous by index", group = "client"}),
 
@@ -87,36 +30,40 @@ awful.keyboard.append_global_keybindings({
     awful.key({ modkey, "Control" }, "k"     , function () awful.screen.focus_relative(-1) end      , {description = "focus the previous screen", group = "screen"}),
     awful.key({ modkey,           }, "u"     , awful.client.urgent.jumpto                           , {description = "jump to urgent client", group = "client"}),
 
-    awful.key({ modkey,           }, "Tab"   , f_prevfocus                                          , {description = "go back", group = "client"}),
+    awful.key({ modkey,           }, "Tab"   , ut.prev                                              , {description = "go back", group = "client"}),
 
+    awful.key({ modkey, "Shift"   }, "b"     , function () 
+        scr = awful.screen.focused()
+        scr.mywibox.visible = not scr.mywibox.visible
+    end                 , {description = "hide wibar", group = "awesome"}),
     -- Standard program
-    awful.key({ modkey,           }, "Return", f_spawn(terminal)                                    , {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, "Mod1"    }, "l"     , f_spawn("xscreensaver-command -lock")                , {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey,           }, "z"     , f_spawn(terminal)                                    , {description = "open a terminal", group = "launcher"}),
-    awful.key({ modkey, "Control" }, "r"     , awesome.restart                                      , {description = "reload awesome", group = "awesome"}),
-    awful.key({ modkey, "Control" }, "q"     , awesome.quit                                         , {description = "quit awesome", group = "awesome"}),
+    awful.key({ modkey,           }, "Return", ut.spawn(const.terminal)                              , {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Mod1"    }, "l"     , ut.spawn("xscreensaver-command -lock")                , {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey,           }, "a"     , ut.spawn(const.terminal)                              , {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey, "Control" }, "r"     , awesome.restart                                       , {description = "reload awesome", group = "awesome"}),
+    awful.key({ modkey, "Control" }, "q"     , awesome.quit                                          , {description = "quit awesome", group = "awesome"}),
 
-    awful.key({ modkey,           }, "l"     , function () awful.tag.incmwfact( 0.05) end           , {description = "increase master width factor", group = "layout"}),
-    awful.key({ modkey,           }, "h"     , function () awful.tag.incmwfact(-0.05) end           , {description = "decrease master width factor", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "h"     , function () awful.tag.incnmaster( 1, nil, true) end  , {description = "increase the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Shift"   }, "l"     , function () awful.tag.incnmaster(-1, nil, true) end  , {description = "decrease the number of master clients", group = "layout"}),
-    awful.key({ modkey, "Control" }, "h"     , function () awful.tag.incncol( 1, nil, true) end     , {description = "increase the number of columns", group = "layout"}),
-    awful.key({ modkey, "Control" }, "l"     , function () awful.tag.incncol(-1, nil, true) end     , {description = "decrease the number of columns", group = "layout"}),
-    awful.key({ modkey,           }, "b"     , function () awful.spawn(browser) end                 , {description = "launch Browser", group = "launcher"}),
-    awful.key({ modkey            }, "p"     , function () awful.spawn("keepassxc") end             , {description = "keepass", group = "launcher"}),
-    awful.key({ modkey, "Shift"   }, "space" , function () awful.layout.inc(-1) end                 , {description = "select previous", group = "layout"}),
-    awful.key({ modkey, "Control" }, "n"     , f_restore_last_minimized                             , {description = "restore minimized", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "n"     , f_restore_minimized_menu                             , {description = "restore minimized menu", group = "client"}),
-    awful.key({ modkey            }, "c"     , f_jump_to_hidden_client                              , {description = "jump to hidden client", group = "client"}),
+    awful.key({ modkey,           }, "l"     , function () awful.tag.incmwfact( 0.005) end           , {description = "increase master width factor", group = "layout"}),
+    awful.key({ modkey,           }, "h"     , function () awful.tag.incmwfact(-0.005) end           , {description = "decrease master width factor", group = "layout"}),
+    awful.key({ modkey, "Shift"   }, "h"     , function () awful.tag.incnmaster( 1, nil, true) end   , {description = "increase the number of master clients", group = "layout"}),
+    awful.key({ modkey, "Shift"   }, "l"     , function () awful.tag.incnmaster(-1, nil, true) end   , {description = "decrease the number of master clients", group = "layout"}),
+    awful.key({ modkey, "Control" }, "h"     , function () awful.tag.incncol( 1, nil, true) end      , {description = "increase the number of columns", group = "layout"}),
+    awful.key({ modkey, "Control" }, "l"     , function () awful.tag.incncol(-1, nil, true) end      , {description = "decrease the number of columns", group = "layout"}),
+    awful.key({ modkey,           }, "b"     , ut.spawn(const.browser)                               , {description = "launch Browser", group = "launcher"}),
+    awful.key({ modkey            }, "p"     , ut.spawn("keepassxc")                                 , {description = "keepass", group = "launcher"}),
+    awful.key({ modkey, "Shift"   }, "space" , function () awful.layout.inc(-1) end                  , {description = "select previous", group = "layout"}),
+    awful.key({ modkey, "Control" }, "n"     , ut.restore_last_minimized                             , {description = "restore minimized", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "n"     , ut.restore_minimized_menu                             , {description = "restore minimized menu", group = "client"}),
+    awful.key({ modkey            }, "c"     , ut.jump_to_hidden_client                              , {description = "jump to hidden client", group = "client"}),
     -- Prompt
-    awful.key({ modkey            }, "r"     , f_rofi_default                                       , {description = "run prompt", group = "launcher"}),
-    awful.key({ modkey , "Shift"  }, "r"     , f_rofi_freedesktop                                   , {description = "run prompt", group = "launcher"}),
-    awful.key({ modkey            }, "'"     , f_lua_prompt                                         , {description = "lua execute prompt", group = "awesome"}),
+    awful.key({ modkey            }, "r"     , ut.rofi_default                                       , {description = "run prompt", group = "launcher"}),
+    awful.key({ modkey , "Shift"  }, "r"     , ut.rofi_freedesktop                                   , {description = "run prompt", group = "launcher"}),
+    awful.key({ modkey            }, "'"     , ut.lua_prompt                                         , {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
-    awful.key({ modkey            }, "Print" , f_spawn("flameshot gui")                             , {description = "flameshot", group = "scrot"}),
-    awful.key({ modkey , "Mod1"   }, "Print" , f_spawn("sh -c \"flameshot gui --delay 3000\"")      , {description = "flameshot with 3s delay", group = "scrot"}),
-    awful.key({ modkey , "Shift"  }, "Print" , f_spawn("flameshot full --clipboard")                , {description = "flameshot fullscreen to clipboard", group = "scrot"}),
-    awful.key({ modkey            }, "o"     , f_spawn("sh -c \"sleep 3; xprop > ~/xpr\"")          , {description = "write xprop to ~/xpr in 3 seconds", group = "scrot"}),
+    awful.key({ modkey            }, "Print" , ut.screenshot(0)                                      , {description = "flameshot", group = "scrot"}),
+    awful.key({ modkey , "Mod1"   }, "Print" , ut.screenshot(3000)                                   , {description = "flameshot with 3s delay", group = "scrot"}),
+    awful.key({ modkey , "Shift"  }, "Print" , ut.spawn("flameshot full --clipboard")                , {description = "flameshot fullscreen to clipboard", group = "scrot"}),
+    awful.key({ modkey            }, "o"     , ut.spawn("sh -c \"sleep 3; xprop > ~/xpr\"")          , {description = "write xprop to ~/xpr in 3 seconds", group = "scrot"}),
               
 })
 
@@ -184,12 +131,12 @@ client.connect_signal("request::default_keybindings", function()
 end)
 
 awful.key.keygroups["tags"] = {
-    {"#10", 1},
-    {"#24", 2},
-    {"#11", 3},
-    {"#25", 4},
-    {"#12", 5},
-    {"#26", 6},
+    {"1", 1},
+    {"q", 2},
+    {"2", 3},
+    {"w", 4},
+    {"3", 5},
+    {"e", 6},
 }
 
 awful.keyboard.append_global_keybindings({
