@@ -17,12 +17,6 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 
-blue        = "#9EBABA"
-red         = "#EB8F8F"
-
-local seperator = wibox.widget.textbox(' <span color="' .. blue .. '">| </span>')
-local spacer = wibox.widget.textbox(' <span color="' .. blue .. '"> </span>')
-
 local function client_menu_toggle_fn()
     local instance = nil
 
@@ -85,30 +79,23 @@ local tasklist_buttons = gears.table.join(
 local textclock = wibox.widget.textclock()
 local month_calendar = awful.widget.calendar_popup.month({style_header = { border_width = 0}, style_weekday = { border_width = 0}, style_normal = { border_width = 0 }})
 
-langbox_timer = gears.timer {
-        timeout = 0.5,
-        callback = function ()
-          show_langbox(false)
-        end
-    }
+local langbox_timer = gears.timer { timeout = 0.5 }
 
 function show_langbox(show)
-    langbox_timer:stop()
-    for s in screen do s.langbox.visible = show end
-    if show  then
-      langbox_timer:start()
+    return function () 
+        langbox_timer:stop()
+        for s in screen do s.langbox.visible = show end
+        if show  then
+          langbox_timer:start()
+        end
     end
 end
-month_calendar:attach(textclock, "bl")
 
-awesome.connect_signal("xkb::map_changed",
-                          function ()
-                            show_langbox(true)
-                          end)
-awesome.connect_signal("xkb::group_changed",
-                          function () 
-                            show_langbox(true)
-                          end);
+langbox_timer:connect_signal("timeout", show_langbox(false))
+awesome.connect_signal("xkb::map_changed", show_langbox(true))
+awesome.connect_signal("xkb::group_changed", show_langbox(true))
+
+month_calendar:attach(textclock, "bl")
 
 screen.connect_signal("request::desktop_decoration", function(s)
 
