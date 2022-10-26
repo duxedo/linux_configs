@@ -157,7 +157,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
         buttons = tasklist_buttons,
         layout = {
             layout = wibox.layout.fixed.vertical,
-            forced_height = 25
+            --forced_height = 25
         },
         style = {
             shape_border_width = 2,
@@ -196,13 +196,13 @@ screen.connect_signal("request::desktop_decoration", function(s)
             id            = "background_role",
             widget        = function(widget)
                 widget = wibox.container.background(widget)
-                tooltip:add_to_object(widget)
                 widget:connect_signal('mouse::enter' , function(self)
+                    tooltip:add_to_object(widget)
                     tooltip.text = self:get_children_by_id('text_role')[1].text
                 end)
                 return widget
             end,
-            forced_height = 75,
+            forced_height = 90,
         },
     }
 
@@ -278,5 +278,6 @@ end)
 
 
 screen.connect_signal("request::resize", function(s)
-    s.mywibox.width = s.geometry.width
+    s.mywibox.height = s.geometry.height
+
 end)
