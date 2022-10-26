@@ -11,7 +11,7 @@ local dpi = require("beautiful.xresources").apply_dpi
 -- {{{ Main
 local theme = {}
 --theme.wallpaper = current_path .. "/zenburn-background-5120.png"
-theme.wallpaper = "/home/reinhardt/.config/wallpapers/2043630.png"
+theme.wallpaper = "/home/reinhardt/.config/wallpapers/wp7786809-5120x1440-wallpapers.png"
 -- }}}
 
 -- {{{ Styles
