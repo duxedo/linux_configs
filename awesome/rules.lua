@@ -18,6 +18,7 @@ ruled.client.connect_signal("request::rules", function()
             raise     = true,
             --size_hints_honor = false, -- Remove gaps between terminals
             screen    = awful.screen.preferred,
+            titlebars_enabled = false
            -- placement = awful.placement.no_overlap+awful.placement.no_offscreen,
         }
     }
@@ -54,13 +55,16 @@ ruled.client.connect_signal("request::rules", function()
                 "pop-up",         -- e.g. Google Chrome's (detached) Developer Tools.
             }
         },
-        properties = { floating = true }
+        properties = { 
+            floating = true,
+            titlebars_enabled = false
+        }
     }
 
     ruled.client.append_rule {
         id = "im-clients",
         rule_any = {
-            class = {"TelegramDesktop", "Slack", "discord", "signal" }
+            class = {"TelegramDesktop", "Slack", "discord", "Signal" }
         }, 
         properties = { tags = {awful.screen.focused().tags[6]} },
     }
@@ -68,9 +72,17 @@ ruled.client.connect_signal("request::rules", function()
     ruled.client.append_rule {
         id = "game-launchers",
         rule_any = {
-            class = {"Steam", "Lutris", "battle.net.exe", "Origin" }
+            class = {"Steam", "Lutris", "battle.net.exe", "Origin", "gamescope" }
         }, 
         properties = { tags = {awful.screen.focused().tags[2]} },
+    }
+
+    ruled.client.append_rule {
+        id = "logs",
+        rule_any = {
+            class = {"logs"}
+        }, 
+        properties = { tags = {awful.screen.focused().tags[4]} },
     }
 
     ruled.client.append_rule {
@@ -92,7 +104,7 @@ ruled.client.connect_signal("request::rules", function()
         -- @DOC_CSD_TITLEBARS@
         id         = "titlebars",
         rule_any   = { type = { "normal", "dialog" } },
-        properties = { titlebars_enabled = true      }
+        properties = { titlebars_enabled = false      }
     }
 
     ruled.client.append_rule {
@@ -169,6 +181,7 @@ client.connect_signal("request::titlebars", function(c)
     if not (l.name == "floating" or c.floating) then
         awful.titlebar.hide(c)
     end
+   awful.titlebar.hide(c)
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
@@ -210,11 +223,26 @@ awful.screen.connect_for_each_screen(function(s)
 end)
 
 client.connect_signal("property::floating", function (c)
-    if c.floating and not c.skip_taskbar then
-        awful.titlebar.show(c)
-        awful.placement.no_offscreen(c)
-    else
-        awful.titlebar.hide(c)
-    end
+ --   if c.floating and not c.skip_taskbar then
+ --       awful.titlebar.show(c)
+ --       awful.placement.no_offscreen(c)
+ --   else
+  --      awful.titlebar.hide(c)
+  --  end
+end)
+
+ruled.notification.connect_signal('request::rules', function()
+    -- All notifications will match this rule.
+    ruled.notification.append_rule {
+        rule       = { },
+        properties = {
+            screen           = awful.screen.preferred,
+            implicit_timeout = 10,
+        }
+    }
+end)
+
+client.connect_signal("mouse::enter", function(c)
+    c:activate { context = "mouse_enter", raise = false }
 end)
 
