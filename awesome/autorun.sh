@@ -31,7 +31,7 @@ if (command -v picom && ! pgrep picom); then
     picom -b &
 fi
 if (command -v signal-desktop && ! pgrep signal-desktop); then
-    signal-desktop --start-in-tray &
+    signal-desktop --use-tray-icon &
 fi
 run deluge &
 sleep 1
