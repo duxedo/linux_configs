@@ -125,7 +125,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
     awful.tag.add("e", {
         layout = lain.layout.termfair,
         screen = s,
-        master_count = 3,
+        master_count = 4,
     })
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()

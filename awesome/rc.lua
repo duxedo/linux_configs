@@ -18,11 +18,26 @@ local lain = require("lain")
 -- Freedesktop menu
 local freedesktop = require("freedesktop")
 
-naughty.config.presets.low.timeout = 10
-naughty.config.presets.normal.timeout = 10
-naughty.config.defaults.position = "bottom_right"
-naughty.config.defaults.timeout = 10
-naughty.config.padding = 50
+awful.util.table.crush(naughty.config, {
+    presets = {
+        low = { timeout = 10 },
+        normal = { timeout = 10 },
+    },
+    defaults = {
+        position = "bottom_right",
+        timeout = 10
+    },
+    padding = 50
+})
+
+function debug_message (msg)
+    naughty.notification {
+        urgency = "critical",
+        title   = "Debug message",
+        message = msg
+    }
+end
+
 naughty.connect_signal("request::display_error", function(message, startup)
     naughty.notification {
         urgency = "critical",

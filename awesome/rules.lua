@@ -3,7 +3,7 @@ local ruled = require("ruled")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
-
+local naughty = require("naughty")
 
 ruled.client.connect_signal("request::rules", function()
     -- @DOC_GLOBAL_RULE@
@@ -18,7 +18,8 @@ ruled.client.connect_signal("request::rules", function()
             raise     = true,
             --size_hints_honor = false, -- Remove gaps between terminals
             screen    = awful.screen.preferred,
-            titlebars_enabled = false
+            titlebars_enabled = false,
+            requested_border_width = beautiful.border_width 
            -- placement = awful.placement.no_overlap+awful.placement.no_offscreen,
         }
     }
@@ -39,7 +40,9 @@ ruled.client.connect_signal("request::rules", function()
               "galaxyclient.exe",
               "Lutris",
               "battle.net.exe",
-              "calc"
+              "calc",
+              "evelauncher.exe",
+              "zoom"
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -64,7 +67,7 @@ ruled.client.connect_signal("request::rules", function()
     ruled.client.append_rule {
         id = "im-clients",
         rule_any = {
-            class = {"TelegramDesktop", "Slack", "discord", "Signal" }
+            class = {"TelegramDesktop", "Slack", "discord", "Signal", "Skype" }
         }, 
         properties = { tags = {awful.screen.focused().tags[6]} },
     }
@@ -83,6 +86,15 @@ ruled.client.connect_signal("request::rules", function()
             class = {"logs"}
         }, 
         properties = { tags = {awful.screen.focused().tags[4]} },
+    }
+
+    ruled.client.append_rule {
+        id = "deluge_main_window",
+        rule = {
+            class = "Deluge",
+            type = "normal"
+        }, 
+        properties = { tags = {awful.screen.focused().tags[5]} },
     }
 
     ruled.client.append_rule {
@@ -114,6 +126,11 @@ ruled.client.connect_signal("request::rules", function()
             awful.placement.centered(c, nil)
         end
     }
+    ruled.client.append_rule {
+        id         = "noborder",
+        rule_any       = { class = {"Steam", "evelauncher.exe"}  },
+        properties = { requested_border_width = 0 },
+    }
 end)
 
 -- Signal function to execute when a new client appears.
@@ -131,7 +148,9 @@ client.connect_signal("request::manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
       --  awful.placement.no_offscreen(c)
     else
-        awful.client.setslave(c)
+        if c.class ~= "exefile.exe" then
+            awful.client.setslave(c)
+        end
     end
 
 end)
@@ -191,31 +210,23 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Handle border sizes of clients.
 awful.screen.connect_for_each_screen(function(s)
     s:connect_signal("arrange", function ()
-        local clients = awful.client.visible(s)
+        local clients = s.clients
         local layout = awful.layout.getname(awful.layout.get(s))
-
+        local single = #s.tiled_clients == 1
+        if #clients == 0 then
+            return
+        end
         for _, c in pairs(clients) do
-          if c.class == "Steam" then
+            if c.leader_window ~= nil then
+              --debug_message(c.name .. "" .. c.leader_window)
+          end
+          if c.maximized or c.fullscreen or layout == "max" or layout == "fullscreen" or single and c == s.tiled_clients[1] then
+            if c.border_width ~= 0 then 
                 c.border_width = 0
-          elseif c.maximized then
-          -- No borders with only one humanly visible client
-            -- NOTE: also handled in focus, but that does not cover maximizing from a
-            -- tiled state (when the client had focus).
-            c.border_width = 0
-          elseif c.floating or layout == "floating" then
-            c.border_width = beautiful.border_width
-          elseif layout == "max" or layout == "fullscreen" then
-            c.border_width = 0
+            end
           else
-            local tiled = awful.client.tiled(c.screen)
-            if #tiled == 1 then -- and c == tiled[1] then
-              tiled[1].border_width = 0
-              -- if layout ~= "max" and layout ~= "fullscreen" then
-              -- XXX: SLOW!
-              -- awful.client.moveresize(0, 0, 2, 0, tiled[1])
-              -- end
-            else
-              c.border_width = beautiful.border_width
+            if c.border_width ~= c.requested_border_width then
+                c.border_width = c.requested_border_width
             end
           end
         end
@@ -223,12 +234,6 @@ awful.screen.connect_for_each_screen(function(s)
 end)
 
 client.connect_signal("property::floating", function (c)
- --   if c.floating and not c.skip_taskbar then
- --       awful.titlebar.show(c)
- --       awful.placement.no_offscreen(c)
- --   else
-  --      awful.titlebar.hide(c)
-  --  end
 end)
 
 ruled.notification.connect_signal('request::rules', function()

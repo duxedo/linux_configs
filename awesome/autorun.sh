@@ -38,3 +38,4 @@ sleep 1
 dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 #xscreensaver-command -lock &
 #dm-tool lock
+spawn_logs &

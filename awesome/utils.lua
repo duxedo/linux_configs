@@ -1,4 +1,5 @@
 awful = require("awful")
+client = require("client")
 
 local utils = {}
 
@@ -45,6 +46,20 @@ function utils.jump_to_hidden_client()
     end)
 end
 
+function utils.add_hidden_client()
+    awful.menu.clients (nil, nil, function(c)
+      if c.minimized then
+        return true
+      end
+      for _, tag in pairs(c:tags()) do
+        if tag.selected then
+          return false
+        end
+      end
+      return true
+    end)
+end
+
 function utils.rofi_default () 
     awful.spawn("rofi -show run -matching regex -sorting-method fzf")
 end
@@ -71,5 +86,20 @@ function utils.screenshot(delay)
         return utils.spawn("flameshot gui")
     end
     return utils.spawn('sh -c "flameshot gui --delay ' .. tostring(delay) .. '"')
+end
+
+function utils.inc_opacity(amount)
+  return function() 
+    if client.focus then
+      local client = client.focus
+      client.opacity = client.opacity + amount
+      if client.opacity >= 1.0 then
+        client.opacity = 1.0
+      end
+      if client.opacity <= 0.0 then
+        client.opacity = 0.0
+      end
+    end
+    end
 end
 return utils
