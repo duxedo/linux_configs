@@ -1,10 +1,7 @@
 local awful = require("awful")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
-local menubar = require("menubar")
 local const = require("constants")
 local ut = require("utils")
-local naughty = require("naughty")
-local gears = require("gears")
 local inspect = require("inspect")
 -- {{{ Mouse bindings
 awful.mouse.append_global_mousebindings({
@@ -15,7 +12,6 @@ awful.mouse.append_global_mousebindings({
 -- }}}
 --
 modkey = const.modkey
-
 
 awful.key.keygroups["jk"] = {
     {"j", 1},

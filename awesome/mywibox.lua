@@ -5,7 +5,6 @@ local lain = require("lain")
 local beautiful = require("beautiful")
 local theme = beautiful.get()
 local gears = require("gears")
-local naughty = require("naughty")
 local constants = require("constants")
 
 local weather_widget = require("awesome-wm-widgets.weather-widget.weather")
@@ -146,6 +145,12 @@ screen.connect_signal("request::desktop_decoration", function(s)
         buttons = taglist_buttons,
         layout  = {
             layout = wibox.layout.flex.horizontal,
+
+            --layout = wibox.layout.grid,
+            --forced_num_rows = 2,
+            --forced_num_cols = 3,
+            --homogenous = true,
+            --expand = true
         }
     }
 
@@ -208,7 +213,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Create the wibox
     s.mywibox = awful.wibar({
-        position = "left",
+        position = "right",
         x = 0,
         y = 0,
         width = 110,

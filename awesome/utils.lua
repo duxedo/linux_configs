@@ -1,6 +1,4 @@
-awful = require("awful")
-client = require("client")
-
+local awful = require("awful")
 local utils = {}
 
 function utils.prevfocus()

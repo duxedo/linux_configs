@@ -3,7 +3,6 @@ local ruled = require("ruled")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
-local naughty = require("naughty")
 
 ruled.client.connect_signal("request::rules", function()
     -- @DOC_GLOBAL_RULE@
