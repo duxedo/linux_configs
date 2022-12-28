@@ -10,3 +10,6 @@
 [submodule "awesome/awesome-wm-widgets"]
 	path = awesome/awesome-wm-widgets
 	url = https://github.com/streetturtle/awesome-wm-widgets
+[submodule "nvim_config"]
+	path = nvim_config
+	url = git@github.com:duxedo/nvim_config.git

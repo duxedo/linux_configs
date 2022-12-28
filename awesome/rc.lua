@@ -11,7 +11,7 @@ local wibox = require("wibox")
 -- Theme handling library
 local beautiful = require("beautiful")
 -- Notification library
-naughty = require("naughty")
+local naughty = require("naughty")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Lain
 local lain = require("lain")
