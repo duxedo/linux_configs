@@ -80,8 +80,10 @@ awful.keyboard.append_global_keybindings({
     key    ({ modkey,           }, "a"     , ut.spawn(const.terminal)                              , "open a terminal"),
     key    ({ modkey,           }, "b"     , ut.spawn(const.browser)                               , "launch Browser"),
     key    ({ modkey            }, "p"     , ut.spawn("keepassxc")                                 , "keepass"),
-    key    ({ modkey            }, "r"     , ut.rofi_default                                       , "run prompt"),
-    key    ({ modkey , "Shift"  }, "r"     , ut.rofi_freedesktop                                   , "run prompt"),
+    key    ({ modkey            }, "r"     , ut.rofi(false), "run prompt"),
+    key    ({ modkey , "Shift"  }, "r"     , ut.rofi(true), "run prompt"),
+    key    ({ modkey            }, "d"     , ut.rofi(false, {floating = true}), "run prompt"),
+    key    ({ modkey , "Shift"  }, "d"     , ut.rofi(true, {floating = true}), "run prompt"),
     group = "launcher"
 })
 
@@ -215,7 +217,7 @@ end
 client.connect_signal("request::default_keybindings", function()
     awful.keyboard.append_client_keybindings({
         key   ({ modkey,           }, "f", ut.fullscreen, "toggle fullscreen", "client"),
-        key   ({ modkey            }, "x",      function (c) c:kill()           end, "close", "client"),
+        key   ({ modkey            }, "x",      function (c) awful.client.focus.history.previous() c:kill()           end, "close", "client"),
         key   ({ modkey, "Control" }, "space",  awful.client.floating.toggle, "toggle floating", "client"),
         key   ({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end, "move to master", "client"),
         key   ({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end, "toggle keep on top", "client"),

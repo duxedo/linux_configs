@@ -1,5 +1,5 @@
 local awful = require("awful")
-local utils = {}
+utils = {}
 
 function utils.prevfocus()
     awful.client.focus.history.previous()
@@ -58,12 +58,19 @@ function utils.add_hidden_client()
     end)
 end
 
-function utils.rofi_default () 
-    awful.spawn("rofi -show run -matching regex -sorting-method fzf")
-end
-
-function utils.rofi_freedesktop () 
-    awful.spawn("rofi -show drun -matching regex -sorting-method fzf")
+function utils.rofi(freedesktop, rules)
+    local run_str = "run"
+    if freedesktop then
+      run_str = "drun"
+    end
+    return function ()
+      rcmd = "rofi -show ".. run_str .. " -matching regex -sorting-method fzf -run-command \"echo {cmd}\""
+      awful.spawn.easy_async(rcmd, function(out)
+        if out then
+          awful.spawn(out, rules)
+        end
+      end)
+    end
 end
 
 function utils.lua_prompt()
