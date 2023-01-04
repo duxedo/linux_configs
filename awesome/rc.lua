@@ -5,18 +5,12 @@ local naughty = require("naughty")
 dbus = _dbus
 local gears = require("gears")
 local awful = require("awful")
-require("awful.autofocus")
--- Widget and layout library
 local wibox = require("wibox")
--- Theme handling library
 local beautiful = require("beautiful")
--- Notification library
-local naughty = require("naughty")
+require("awful.autofocus")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Lain
 local lain = require("lain")
--- Freedesktop menu
-local freedesktop = require("freedesktop")
 
 awful.util.table.crush(naughty.config, {
     presets = {
