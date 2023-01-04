@@ -21,7 +21,7 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
 fi
 
 run xcape -e 'Super_L=Super_L|Control_L|Escape'
-run pa-applet
+run volumeicon
 run blueman-applet
 run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
