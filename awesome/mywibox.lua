@@ -100,7 +100,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Each screen has its own tag table.
     --awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
-    
+
     awful.tag.add("1", {
         layout = awful.layout.suit.tile,
         screen = s,
@@ -136,14 +136,14 @@ screen.connect_signal("request::desktop_decoration", function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
-    
+
 
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist{
-        screen = s, 
-        filter = awful.widget.taglist.filter.all, 
+        screen = s,
+        filter = awful.widget.taglist.filter.all,
         buttons = taglist_buttons,
-        layout  = {
+        base_layout  = {
             layout = wibox.layout.flex.horizontal,
 
             --layout = wibox.layout.grid,
@@ -151,7 +151,37 @@ screen.connect_signal("request::desktop_decoration", function(s)
             --forced_num_cols = 3,
             --homogenous = true,
             --expand = true
-        }
+        },
+        widget_template = {
+            {
+                {
+                    id     = "label_role",
+                    widget = wibox.widget.textbox
+                },
+                margins = {left=4, right = 4 , top = 2, bottom = 3},
+                widget  = wibox.container.margin,
+            },
+            id     = "background_role",
+            widget = wibox.container.background,
+            -- Add support for hover colors and an index label
+            create_callback = function(self, c3, index, tags)
+                self.label = self.label or self:get_children_by_id("label_role")[1]
+                self.label.markup = "<b>"..c3.name.."</b>"
+                self:connect_signal("mouse::enter", function()
+                    if self.bg ~= "#ee0000" then
+                        self.backup     = self.bg
+                        self.has_backup = true
+                    end
+                    self.bg = "#ee0000"
+                end)
+                self:connect_signal("mouse::leave", function()
+                    if self.has_backup then self.bg = self.backup end
+                end)
+            end,
+            update_callback = function(self, c3, index, tags)
+                self.label.markup = "<b>"..c3.name.."</b>"
+            end,
+        },
     }
 
     local tooltip = awful.tooltip {}
@@ -191,9 +221,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
                         widget = wibox.widget.textbox,
                         wrap = "char",
                     },
-                    widget = function(widget) 
-                        wig =  wibox.container.margin(widget, 5, 5)
-                        return wig
+                    widget = function(widget)
+                        return wibox.container.margin(widget, 5, 5)
                     end
                 },
                 layout = wibox.layout.fixed.vertical,
@@ -224,9 +253,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
     })
     -- Add widgets to the wibox
     s.mywibox:setup {
-        
         layout = wibox.layout.align.vertical,
-        { -- Left widgets
+        { -- Top widgets
             layout = wibox.layout.fixed.vertical,
             {
                 layout = wibox.layout.flex.horizontal,
@@ -235,31 +263,39 @@ screen.connect_signal("request::desktop_decoration", function(s)
             },
         },
         s.mytasklist, -- Middle widget
-        { -- Right widgets
+        { -- Bottom widgets
             layout = wibox.layout.fixed.vertical,
             {
-                layout = wibox.layout.align.horizontal,
-                s.mylayoutbox,
-                weather_widget({
-                    api_key=constants.weather_api_key,
-                    coordinates = {60.004, 30.324},
-                    show_hourly_forecast = true,
-                    show_daily_forecast = true,
-                }),
-                mykeyboardlayout,
-                forced_height = 25,
-            },
-            {
-                widget = wibox.widget.systray,
-                horizontal = true,
-                base_size = 25
+                {
+                    layout = wibox.layout.fixed.vertical,
+                    {
+                        layout = wibox.layout.align.horizontal,
+                        s.mylayoutbox,
+                        weather_widget({
+                            api_key=constants.weather_api_key,
+                            coordinates = {60.004, 30.324},
+                            show_hourly_forecast = true,
+                            show_daily_forecast = true,
+                        }),
+                        mykeyboardlayout,
+                        forced_height = 25,
+                    },
+                    {
+                        widget = wibox.widget.systray,
+                        horizontal = true,
+                        base_size = 25
+                    },
+                },
+                widget = wibox.container.margin,
+                left = 3,
+                right = 3
             },
             {
                 layout = wibox.layout.fixed.horizontal,
                 forced_height = 25,
                 textclock,
             },
-        },
+        }
     }
 
     s.langbox = wibox(
