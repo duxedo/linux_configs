@@ -21,19 +21,15 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
 fi
 
 run xcape -e 'Super_L=Super_L|Control_L|Escape'
-run volumeicon
+run pa-applet
 run blueman-applet
 run telegram-desktop
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run discord
 run kdeconnect-indicator
-if (command -v picom && ! pgrep picom); then
-    picom -b &
-fi
-if (command -v signal-desktop && ! pgrep signal-desktop); then
-    signal-desktop --use-tray-icon &
-fi
-run deluge &
+run picom -b
+run signal-desktop --use-tray-icon
+run deluge 
 sleep 1
 dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 #xscreensaver-command -lock &
