@@ -3,12 +3,13 @@ local ruled = require("ruled")
 local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
+local games = require("rules.games")
 
 ruled.client.connect_signal("request::rules", function()
     -- @DOC_GLOBAL_RULE@
     -- All clients will match this rule.
     ruled.client.append_rule {
-        
+
         id         = "global",
         rule       = { },
         except     = { name = "Origin" },
@@ -18,7 +19,7 @@ ruled.client.connect_signal("request::rules", function()
             --size_hints_honor = false, -- Remove gaps between terminals
             screen    = awful.screen.preferred,
             titlebars_enabled = false,
-            requested_border_width = beautiful.border_width 
+            requested_border_width = beautiful.border_width
            -- placement = awful.placement.no_overlap+awful.placement.no_offscreen,
         }
     }
@@ -41,7 +42,8 @@ ruled.client.connect_signal("request::rules", function()
               "battle.net.exe",
               "calc",
               "evelauncher.exe",
-              "zoom"
+              "zoom",
+              "RPCS3"
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -57,7 +59,7 @@ ruled.client.connect_signal("request::rules", function()
                 "pop-up",         -- e.g. Google Chrome's (detached) Developer Tools.
             }
         },
-        properties = { 
+        properties = {
             floating = true,
             titlebars_enabled = false
         }
@@ -67,7 +69,7 @@ ruled.client.connect_signal("request::rules", function()
         id = "im-clients",
         rule_any = {
             class = {"TelegramDesktop", "Slack", "discord", "Signal", "Skype" }
-        }, 
+        },
         properties = { tags = {awful.screen.focused().tags[6]} },
     }
 
@@ -75,15 +77,25 @@ ruled.client.connect_signal("request::rules", function()
         id = "game-launchers",
         rule_any = {
             class = {"Steam", "Lutris", "battle.net.exe", "Origin", "gamescope" }
-        }, 
+        },
         properties = { tags = {awful.screen.focused().tags[2]} },
+    }
+
+    ruled.client.append_rule {
+        id = "default_master",
+        rule_any = {
+            class = { "exefile.exe", "smplayer" }
+        },
+        properties = {
+            default_master = true
+        },
     }
 
     ruled.client.append_rule {
         id = "logs",
         rule_any = {
             class = {"logs"}
-        }, 
+        },
         properties = { tags = {awful.screen.focused().tags[4]} },
     }
 
@@ -92,7 +104,7 @@ ruled.client.connect_signal("request::rules", function()
         rule = {
             class = "Deluge",
             type = "normal"
-        }, 
+        },
         properties = { tags = {awful.screen.focused().tags[5]} },
     }
 
@@ -100,13 +112,13 @@ ruled.client.connect_signal("request::rules", function()
         id = "android-studio",
         rule_any = {
             class = {"jetbrains-studio"}
-        }, 
+        },
         properties = { tags = {awful.screen.focused().tags[3]}},
-        callback = function(c) 
+        callback = function(c)
             if c.skip_taskbar then
                 c.floating = true
                 awful.placement.centered(c)
-            end    
+            end
         end,
     }
     -- @DOC_DIALOG_RULE@
@@ -130,6 +142,9 @@ ruled.client.connect_signal("request::rules", function()
         rule_any       = { class = {"Steam", "evelauncher.exe"}  },
         properties = { requested_border_width = 0 },
     }
+    for _, rule in pairs(games) do
+        ruled.client.append_rule(rule)
+    end
 end)
 
 -- Signal function to execute when a new client appears.
@@ -147,7 +162,7 @@ client.connect_signal("request::manage", function (c)
         -- Prevent clients from being unreachable after screen count changes.
       --  awful.placement.no_offscreen(c)
     else
-        if c.class ~= "exefile.exe" then
+        if not c.default_master then
             awful.client.setslave(c)
         end
     end
@@ -196,7 +211,7 @@ client.connect_signal("request::titlebars", function(c)
     }
         -- Hide the menubar if we are not floating
     local l = awful.layout.get(c.screen)
-    if not (l.name == "floating" or c.floating) then
+    if l ~= nil and not (l.name == "floating" or c.floating) then
         awful.titlebar.hide(c)
     end
    awful.titlebar.hide(c)
@@ -216,9 +231,6 @@ awful.screen.connect_for_each_screen(function(s)
             return
         end
         for _, c in pairs(clients) do
-            if c.leader_window ~= nil then
-              --debug_message(c.name .. "" .. c.leader_window)
-          end
           if c.maximized or c.fullscreen or layout == "max" or layout == "fullscreen" or single and c == s.tiled_clients[1] then
             if c.border_width ~= 0 then 
                 c.border_width = 0
