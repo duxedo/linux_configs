@@ -2,7 +2,6 @@ local awful = require("awful")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 local const = require("constants")
 local ut = require("utils")
-local inspect = require("inspect")
 -- {{{ Mouse bindings
 awful.mouse.append_global_mousebindings({
     --awful.button({ }, 3, function () mymainmenu:toggle() end),
@@ -46,10 +45,43 @@ local toggle_wibar = function ()
     scr = awful.screen.focused()
     scr.mywibox.visible = not scr.mywibox.visible
 end
+
+local function movefocus(next_client)
+    local prev_client = client.focus
+    local prev_client_box = prev_client and { x = prev_client.x, y = prev_client.y, w = prev_client.width, h = prev_client.height } or nil
+    next_client:emit_signal("request::activate", "movefocus",
+                       {raise=true})
+
+    local coords = mouse.coords()
+
+    if prev_client_box ~= nil then
+        coords.x = coords.x - prev_client_box.x
+        coords.x = coords.x / prev_client_box.w
+        coords.y = coords.y - prev_client_box.y
+        coords.y = coords.y / prev_client_box.h
+    else
+        coords = { x = 0.5, y = 0.5 }
+    end
+    
+    if coords.y < 0 or coords.y > 1 or coords.x < 0 or coords.x > 1 then
+      return
+    end
+
+    coords.y = coords.y * next_client.height
+    coords.y = coords.y + next_client.y
+    coords.x = coords.x * next_client.width
+    coords.x = coords.x + next_client.x
+    mouse.coords(coords, true) -- x,y, silent (don't fire signals such as enter/leave)
+end
+
+local function focus_by_idx(i)
+    local next_client = awful.client.next(i)
+    movefocus(next_client)
+end
 -- {{{ Key bindings
 awful.keyboard.append_global_keybindings({
     altkey ({ modkey, "Shift" }, "jk", awful.client.swap.byidx, "swap with next/previous client"),
-    altkey ({ modkey }, "jk"            , awful.client.focus.byidx, "focus next/previous by index"),
+    altkey ({ modkey }, "jk"            , focus_by_idx, "focus next/previous by index"),
     key    ({ modkey,           }, "u"     , awful.client.urgent.jumpto                           , "jump to urgent client"),
     key    ({ modkey,           }, "Tab"   , ut.prev                                              , "go back"),
     key    ({ modkey, "Control" }, "n"     , ut.restore_last_minimized                             , "restore minimized"),
@@ -95,7 +127,8 @@ awful.keyboard.append_global_keybindings({
     altkey ({ modkey            }, "hl"    , function (d) awful.tag.incmwfact( -d * 0.005) end      , "increase/decrease master width factor"),
     altkey ({ modkey, "Shift"   }, "hl"    , function (d) awful.tag.incnmaster( -d, nil, true) end  , "increase/decrease the number of master clients"),
     altkey ({ modkey, "Control" }, "hl"    , function (d) awful.tag.incncol( -d, nil, true) end     , "increase/decrease the number of columns"),
-    key    ({ modkey, "Shift"   }, "space" , function () awful.layout.inc(-1) end                   , "select previous"),
+    key    ({ modkey, "Shift"   }, ","     , function () awful.layout.inc(-1) end                   , "select previous"),
+    key    ({ modkey, "Shift"   }, "."     , function () awful.layout.inc(1) end                   , "select previous"),
     group = "layout"
 })
 awful.keyboard.append_global_keybindings({
@@ -141,79 +174,6 @@ ut.fullscreen = function(c)
     c.fullscreen = not c.fullscreen
     c:raise()
 end
-local props = {
-    "window",
-    "name",
-    "skip_taskbar",
-    "type",
-    "class",
-    "instance",
-    "pid",
-    "role",
-    "machine",
-    "icon_name",
-    "icon",
-    "icon_sizes",
-    "screen",
-    "hidden",
-    "minimized",
-    "size_hints_honor",
-    "border_width",
-    "border_color",
-    "urgent",
-    "content",
-    "opacity",
-    "ontop",
-    "above",
-    "below",
-    "fullscreen",
-    "maximized",
-    "maximized_horizontal",
-    "maximized_vertical",
-    "transient_for",
-    "group_window",
-    "leader_window",
-    "size_hints",
-    "motif_wm_hints",
-    "sticky",
-    "modal",
-    "focusable",
-    "shape_bounding",
-    "shape_clip",
-    "shape_input",
-    "client_shape_bounding",
-    "client_shape_clip",
-    "startup_id",
-    "valid",
-    "first_tag",
-    "buttons",
-    "keys",
-    "marked",
-    "is_fixed",
-    "immobilized_horizontal",
-    "immobilized_vertical",
-    "floating",
-    "x",
-    "y",
-    "width",
-    "height",
-    "dockable",
-    "requests_no_titlebar",
-    "shape",
-    "active"
-}
-function ut.dumpclient(c)
-    local repr = inspect(c)
-    file = io.open("/home/reinhardt/lastclient.txt", "w")
-    io.output(file)
-    io.write(repr)
-    io.write("\n")
-    for k, v in pairs(props) do
-        io.write(string.format("%s = %s \n",v,  inspect(c[v])))
-    end
-    io.close(file)
-end
-
 client.connect_signal("request::default_keybindings", function()
     awful.keyboard.append_client_keybindings({
         key   ({ modkey,           }, "f", ut.fullscreen, "toggle fullscreen", "client"),

@@ -1,4 +1,6 @@
 local awful = require("awful")
+local inspect = require("inspect")
+
 utils = {}
 
 function utils.prevfocus()
@@ -67,6 +69,7 @@ function utils.rofi(freedesktop, rules)
       rcmd = "rofi -show ".. run_str .. " -matching regex -sorting-method fzf -run-command \"echo {cmd}\""
       awful.spawn.easy_async(rcmd, function(out)
         if out then
+          print(out)
           awful.spawn(out, rules)
         end
       end)
@@ -107,4 +110,80 @@ function utils.inc_opacity(amount)
     end
     end
 end
+
+utils.client_props = {
+    "window",
+    "name",
+    "skip_taskbar",
+    "type",
+    "class",
+    "instance",
+    "pid",
+    "role",
+    "machine",
+    "icon_name",
+    "icon",
+    "icon_sizes",
+    "screen",
+    "hidden",
+    "minimized",
+    "size_hints_honor",
+    "border_width",
+    "border_color",
+    "urgent",
+    "content",
+    "opacity",
+    "ontop",
+    "above",
+    "below",
+    "fullscreen",
+    "maximized",
+    "maximized_horizontal",
+    "maximized_vertical",
+    "transient_for",
+    "group_window",
+    "leader_window",
+    "size_hints",
+    "motif_wm_hints",
+    "sticky",
+    "modal",
+    "focusable",
+    "shape_bounding",
+    "shape_clip",
+    "shape_input",
+    "client_shape_bounding",
+    "client_shape_clip",
+    "startup_id",
+    "valid",
+    "first_tag",
+    "buttons",
+    "keys",
+    "marked",
+    "is_fixed",
+    "immobilized_horizontal",
+    "immobilized_vertical",
+    "floating",
+    "x",
+    "y",
+    "width",
+    "height",
+    "dockable",
+    "requests_no_titlebar",
+    "shape",
+    "active"
+}
+
+function utils.dumpclient(c)
+    local repr = inspect(c)
+    file = io.open("/home/reinhardt/lastclient.txt", "w")
+    io.output(file)
+    io.write(repr)
+    io.write("\n")
+    for k, v in pairs(utils.client_props) do
+        io.write(string.format("%s = %s \n",v,  inspect(c[v])))
+    end
+    io.close(file)
+end
+
+
 return utils
