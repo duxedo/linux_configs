@@ -103,22 +103,27 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     awful.tag.add("1", {
         layout = awful.layout.suit.tile,
+        column_count = 2,
         screen = s,
     }):view_only()
     awful.tag.add("q", {
         layout = awful.layout.suit.tile,
+        column_count = 2,
         screen = s,
     })
     awful.tag.add("2", {
         layout = awful.layout.suit.tile,
+        column_count = 2,
         screen = s,
     })
     awful.tag.add("w", {
         layout = awful.layout.suit.tile,
+        column_count = 2,
         screen = s,
     })
     awful.tag.add("3", {
         layout = awful.layout.suit.tile,
+        column_count = 2,
         screen = s,
     })
     awful.tag.add("e", {
@@ -242,9 +247,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
 
     -- Create the wibox
     s.mywibox = awful.wibar({
-        position = "right",
-        x = 0,
-        y = 0,
+        position = "left",
         width = 110,
         height = s.geometry.height,
         screen = s, 
