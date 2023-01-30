@@ -4,6 +4,7 @@ local gears = require("gears")
 local beautiful = require("beautiful")
 local wibox = require("wibox")
 local games = require("rules.games")
+local work = require("rules.work")
 
 ruled.client.connect_signal("request::rules", function()
     -- @DOC_GLOBAL_RULE@
@@ -145,6 +146,9 @@ ruled.client.connect_signal("request::rules", function()
     for _, rule in pairs(games) do
         ruled.client.append_rule(rule)
     end
+    for _, rule in pairs(work) do
+        ruled.client.append_rule(rule)
+    end
 end)
 
 -- Signal function to execute when a new client appears.
@@ -152,6 +156,7 @@ client.connect_signal("request::manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
     -- if not awesome.startup then awful.client.setslave(c) end
+    print("AWSM: New client Name=\'" .. (c.name or "nil") .. "\' class=\'" .. (c.class or "<nil>") .. "\' windowid=\'" .. (c.window or "nil") .. "\'")
     local name = c.name
     if name == "Origin" and c.skip_taskbar then
         --c.hidden = true
