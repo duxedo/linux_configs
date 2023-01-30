@@ -111,7 +111,7 @@ awful.keyboard.append_global_keybindings({
     key    ({ modkey, "Mod1"    }, "l"     , ut.spawn("xscreensaver-command -lock")                , "open a terminal"),
     key    ({ modkey,           }, "a"     , ut.spawn(const.terminal)                              , "open a terminal"),
     key    ({ modkey,           }, "b"     , ut.spawn(const.browser)                               , "launch Browser"),
-    key    ({ modkey            }, "p"     , ut.spawn("keepassxc")                                 , "keepass"),
+    key    ({ modkey            }, "p"     , ut.raise_or_spawn("keepassxc")                                 , "keepass"),
     key    ({ modkey            }, "r"     , ut.rofi(false), "run prompt"),
     key    ({ modkey , "Shift"  }, "r"     , ut.rofi(true), "run prompt"),
     key    ({ modkey            }, "d"     , ut.rofi(false, {floating = true}), "run prompt"),
