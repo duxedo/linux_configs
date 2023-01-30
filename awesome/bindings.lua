@@ -88,6 +88,8 @@ awful.keyboard.append_global_keybindings({
     altkey ({ modkey,           }, "-="    , function (d) ut.inc_opacity(-d * 0.1)() end           , "increase/decrease opacity"),
     key    ({ modkey, "Shift"   }, "n"     , ut.restore_minimized_menu                             , "restore minimized menu"),
     key    ({ modkey            }, "c"     , ut.jump_to_hidden_client                              , "jump to hidden client"),
+--    key    ({}, "XF86AudioRaiseVolume"     , ut.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")                              , "increase volume"),
+--    key    ({}, "XF86AudioLowerVolume "    , ut.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")                              , "decrease volume"),
     group = "client"
 })
 awful.keyboard.append_global_keybindings({
@@ -186,7 +188,7 @@ client.connect_signal("request::default_keybindings", function()
         key   ({ modkey,           }, "m", ut.maximize(), "(un)maximize", "client"),
         key   ({ modkey, "Control" }, "m", ut.maximize(ut.vert), "(un)maximize vertically", "client"),
         key   ({ modkey, "Shift"   }, "m", ut.maximize(ut.hor), "(un)maximize horizontally", "client"),
-        key   ({ modkey }, "d", ut.dumpclient, "(un)maximize horizontally", "client"),
+        key   ({ modkey, "Control" }, "d", ut.dumpclient, "dump client properties", "client"),
     })
 end)
 
@@ -197,6 +199,12 @@ awful.key.keygroups["tags"] = {
     {"w", 4},
     {"3", 5},
     {"e", 6},
+    {"4", 7},
+    {"5", 8},
+    {"6", 9},
+    {"7", 10},
+    {"8", 11},
+    {"9", 12},
 }
 
 awful.keyboard.append_global_keybindings({

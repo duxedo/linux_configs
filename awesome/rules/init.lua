@@ -43,7 +43,7 @@ ruled.client.connect_signal("request::rules", function()
               "calc",
               "evelauncher.exe",
               "zoom",
-              "RPCS3"
+              "RPCS3",
             },
             -- Note that the name property shown in xprop might be set slightly after creation of the client
             -- and the name shown there might not match defined rules here.
@@ -51,7 +51,7 @@ ruled.client.connect_signal("request::rules", function()
               "Event Tester",  -- xev.
               "Origin",   -- Origin client.
               "Welcome to Android Studio",
-              "Android Virtual Device Manager" -- android studio AVD
+              "Android Virtual Device Manager", -- android studio AVD
             },
             role    = {
                 "AlarmWindow",    -- Thunderbird's calendar.
@@ -96,7 +96,7 @@ ruled.client.connect_signal("request::rules", function()
         rule_any = {
             class = {"logs"}
         },
-        properties = { tags = {awful.screen.focused().tags[4]} },
+        properties = { tags = {awful.screen.focused().tags[9]} },
     }
 
     ruled.client.append_rule {
@@ -105,7 +105,7 @@ ruled.client.connect_signal("request::rules", function()
             class = "Deluge",
             type = "normal"
         },
-        properties = { tags = {awful.screen.focused().tags[5]} },
+        properties = { tags = {awful.screen.focused().tags[11]} },
     }
 
     ruled.client.append_rule {
@@ -174,13 +174,11 @@ client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
     local buttons = gears.table.join(
         awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
+            c:activate()
             awful.mouse.client.move(c)
         end),
         awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
+            c:activate()
             awful.mouse.client.resize(c, nil, awful.placement.right)
         end)
     )
@@ -214,7 +212,6 @@ client.connect_signal("request::titlebars", function(c)
     if l ~= nil and not (l.name == "floating" or c.floating) then
         awful.titlebar.hide(c)
     end
-   awful.titlebar.hide(c)
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)

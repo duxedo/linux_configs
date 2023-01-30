@@ -89,6 +89,10 @@ function utils.spawn(cmd)
     return function() awful.spawn(cmd) end
 end
 
+function utils.raise_or_spawn(cmd)
+    return function() awful.spawn.raise_or_spawn(cmd) end
+end
+
 function utils.screenshot(delay)
     if delay == 0 then
         return utils.spawn("flameshot gui")
@@ -97,7 +101,7 @@ function utils.screenshot(delay)
 end
 
 function utils.inc_opacity(amount)
-  return function() 
+  return function()
     if client.focus then
       local client = client.focus
       client.opacity = client.opacity + amount
@@ -176,13 +180,12 @@ utils.client_props = {
 function utils.dumpclient(c)
     local repr = inspect(c)
     file = io.open("/home/reinhardt/lastclient.txt", "w")
-    io.output(file)
-    io.write(repr)
-    io.write("\n")
+    file:write(repr)
+    file:write("\n")
     for k, v in pairs(utils.client_props) do
-        io.write(string.format("%s = %s \n",v,  inspect(c[v])))
+        file:write(string.format("%s = %s \n",v,  inspect(c[v])))
     end
-    io.close(file)
+    file:close()
 end
 
 

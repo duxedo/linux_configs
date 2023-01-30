@@ -118,7 +118,8 @@ screen.connect_signal("request::desktop_decoration", function(s)
     })
     awful.tag.add("w", {
         layout = awful.layout.suit.tile,
-        column_count = 2,
+        column_count = 10,
+        master_count = 0,
         screen = s,
     })
     awful.tag.add("3", {
@@ -127,9 +128,40 @@ screen.connect_signal("request::desktop_decoration", function(s)
         screen = s,
     })
     awful.tag.add("e", {
-        layout = lain.layout.termfair,
+        layout = awful.layout.suit.tile,
+        column_count = 10,
+        master_count = 0,
         screen = s,
-        master_count = 4,
+    })
+    awful.tag.add("4", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
+    })
+    awful.tag.add("5", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
+    })
+    awful.tag.add("6", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
+    })
+    awful.tag.add("7", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
+    })
+    awful.tag.add("8", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
+    })
+    awful.tag.add("9", {
+        layout = awful.layout.suit.tile,
+        column_count = 2,
+        screen = s,
     })
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -149,13 +181,11 @@ screen.connect_signal("request::desktop_decoration", function(s)
         filter = awful.widget.taglist.filter.all,
         buttons = taglist_buttons,
         base_layout  = {
-            layout = wibox.layout.flex.horizontal,
-
-            --layout = wibox.layout.grid,
-            --forced_num_rows = 2,
-            --forced_num_cols = 3,
-            --homogenous = true,
-            --expand = true
+            layout = wibox.layout.grid,
+            forced_num_rows = 2,
+            forced_num_cols = 6,
+            homogenous = true,
+            expand = true
         },
         widget_template = {
             {
@@ -200,7 +230,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
             --forced_height = 25
         },
         style = {
-            shape_border_width = 2,
+            shape_border_width = 1,
             shape_border_color  = "#4A4A4A",
             shape = function(cr, width, height)
                 gears.shape.partially_rounded_rect(cr, width, height, true, false, true, false, 10)
@@ -248,7 +278,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
     -- Create the wibox
     s.mywibox = awful.wibar({
         position = "left",
-        width = 110,
+        width = 108,
         height = s.geometry.height,
         screen = s, 
         visible = true,
@@ -262,7 +292,7 @@ screen.connect_signal("request::desktop_decoration", function(s)
             {
                 layout = wibox.layout.flex.horizontal,
                 s.mytaglist,
-                forced_height = 20
+                forced_height = 40
             },
         },
         s.mytasklist, -- Middle widget
