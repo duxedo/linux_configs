@@ -23,7 +23,6 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
   system-config-printer-applet &
 fi
 
-run xcape -e 'Super_L=Super_L|Control_L|Escape'
 run pa-applet
 run blueman-applet
 run telegram-desktop
