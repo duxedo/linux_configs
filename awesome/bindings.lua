@@ -62,7 +62,7 @@ local function movefocus(next_client)
     else
         coords = { x = 0.5, y = 0.5 }
     end
-    
+
     if coords.y < 0 or coords.y > 1 or coords.x < 0 or coords.x > 1 then
       return
     end
@@ -149,37 +149,11 @@ awful.keyboard.append_global_keybindings({
             --end ,
               --{description="disable wibar autoshow", group="awesome"}),
             --})
-ut.vert = 1
-ut.hor = 2
-ut.maximize = function(mode)
-    if mode == nil then
-        return function(c)
-            c.maximized = not c.maximized
-            c:raise()
-        end
-    end
-    if mode == ut.vert then
-        return function(c)
-            c.maximized_vertical = not c.maximized_vertical
-            c:raise()
-        end
-    end
-    if mode == ut.hor then
-        return function(c)
-            c.maximized_horizontal = not c.maximized_horizontal
-            c:raise()
-        end
-    end
-end
 
-ut.fullscreen = function(c)
-    c.fullscreen = not c.fullscreen
-    c:raise()
-end
 client.connect_signal("request::default_keybindings", function()
     awful.keyboard.append_client_keybindings({
         key   ({ modkey,           }, "f", ut.fullscreen, "toggle fullscreen", "client"),
-        key   ({ modkey            }, "x",      function (c) awful.client.focus.history.previous() c:kill()           end, "close", "client"),
+        key   ({ modkey            }, "x",      function (c) awful.client.focus.history.previous() c:kill() end, "close", "client"),
         key   ({ modkey, "Control" }, "space",  awful.client.floating.toggle, "toggle floating", "client"),
         key   ({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end, "move to master", "client"),
         key   ({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end, "toggle keep on top", "client"),
@@ -310,7 +284,7 @@ chords = {
 }
 
 local function stop(cbk)
-    return 
+    return
     function(grabber)
         cbk()
         grabber:stop()

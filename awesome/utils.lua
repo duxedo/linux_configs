@@ -201,4 +201,33 @@ function utils.dumpclient(c)
     file:close()
 end
 
+
+utils.vert = 1
+utils.hor = 2
+function utils.maximize(mode)
+    if mode == nil then
+        return function(c)
+            c.maximized = not c.maximized
+            c:raise()
+        end
+    end
+    if mode == utils.vert then
+        return function(c)
+            c.maximized_vertical = not c.maximized_vertical
+            c:raise()
+        end
+    end
+    if mode == utils.hor then
+        return function(c)
+            c.maximized_horizontal = not c.maximized_horizontal
+            c:raise()
+        end
+    end
+end
+
+function utils.fullscreen(c)
+    c.fullscreen = not c.fullscreen
+    c:raise()
+end
+
 return utils
