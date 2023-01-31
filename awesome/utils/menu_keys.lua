@@ -1,3 +1,2 @@
-
-local keySet = "hjklasdfghqwertyuiop[];'zxcvbnm,./1234567890-="
+local keySet = 'hjklasdfghqwertyuiop[];\'zxcvbnm,./1234567890-='
 

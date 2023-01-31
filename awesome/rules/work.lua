@@ -1,11 +1,7 @@
 return {
     {
-        id = "myoffice apps",
-        rule_any = {
-            class = {"MyOffice Spreadsheet"}
-        },
-        properties = {
-            floating = true
-        }
+        id = 'myoffice apps',
+        rule_any = { class = { 'MyOffice Spreadsheet' } },
+        properties = { floating = true }
     }
 }
