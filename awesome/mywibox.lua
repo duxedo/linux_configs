@@ -57,39 +57,30 @@ local taglist_buttons = gears.table.join(
                             )
                         )
 
-local tasklist_buttons = gears.table.join(
-                             awful.button(
-                                 {}, 1, function(c)
-            if c == client.focus then
-                c.minimized = true
-            else
-                -- Without this, the following
-                -- :isvisible() makes no sense
-                c.minimized = false
-                if not c:isvisible() and c.first_tag then
-                    c.first_tag:view_only()
+local tasklist_buttons = 
+    gears.table.join(
+        awful.button( {}, 1,
+            function(c)
+                if c == client.focus then
+                    c.minimized = true
+                else
+                    -- Without this, the following
+                    -- :isvisible() makes no sense
+                    c.minimized = false
+                    if not c:isvisible() and c.first_tag then
+                        c.first_tag:view_only()
+                    end
+                    -- This will also un-minimize
+                    -- the client, if needed
+                    client.focus = c
+                    c:raise()
                 end
-                -- This will also un-minimize
-                -- the client, if needed
-                client.focus = c
-                c:raise()
-            end
-        end
-                             ), awful.button(
-                                 {}, 2, function(c)
-            c:kill()
-        end
-                             ), awful.button({}, 3, client_menu_toggle_fn()),
-                             awful.button(
-                                 {}, 4, function()
-            awful.tag.viewnext()
-        end
-                             ), awful.button(
-                                 {}, 5, function()
-            awful.tag.viewprev()
-        end
-                             )
-                         )
+            end),
+        awful.button( {}, 2, function(c) c:kill() end), 
+        awful.button({}, 3, client_menu_toggle_fn()),
+        awful.button( {}, 4, function() awful.tag.viewnext() end), 
+        awful.button( {}, 5, function() awful.tag.viewprev() end)
+     )
 
 local textclock = wibox.widget.textclock()
 local month_calendar = awful.widget.calendar_popup.month(
@@ -125,14 +116,11 @@ screen.connect_signal(
 
         -- Each screen has its own tag table.
         -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
-
-        awful.tag
-            .add('1', { layout = awful.layout.suit.tile, column_count = 2, screen = s }):view_only()
-        awful.tag
-            .add('q', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('2', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag.add(
+        local addtag = awful.tag.add
+        addtag('1', { layout = awful.layout.suit.tile, column_count = 2, screen = s }):view_only()
+        addtag('q', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('2', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag(
             'w', {
                 layout = awful.layout.suit.tile,
                 column_count = 10,
@@ -140,9 +128,8 @@ screen.connect_signal(
                 screen = s
             }
         )
-        awful.tag
-            .add('3', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag.add(
+        addtag('3', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag(
             'e', {
                 layout = awful.layout.suit.tile,
                 column_count = 10,
@@ -150,18 +137,12 @@ screen.connect_signal(
                 screen = s
             }
         )
-        awful.tag
-            .add('4', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('5', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('6', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('7', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('8', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        awful.tag
-            .add('9', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('4', { layout = awful.layout.suit.tle, column_count = 2, screen = s })
+        addtag('5', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('6', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('7', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('8', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('9', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
         -- Create a promptbox for each screen
         s.mypromptbox = awful.widget.prompt()
         -- Create an imagebox widget which will contains an icon indicating which layout we're using.
