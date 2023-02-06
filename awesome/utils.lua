@@ -66,18 +66,37 @@ function utils.add_hidden_client()
     )
 end
 
-function utils.rofi(freedesktop, rules)
-    local run_str = 'run'
-    if freedesktop then
-        run_str = 'drun'
+local function makeArgs(args, prefix, arg_sep, sep)
+    local args_str = ""
+    for k, v in pairs(args) do
+        args_str = args_str .. sep .. prefix .. k .. arg_sep .. v
     end
+    return args_str
+end
+
+function utils.rofi(args, rules)
+    local default_args={
+        show = "run",
+        matching = "regex",
+        ["sorting-method"] = "fzf"
+    }
+
+    if not args then
+        args = default_args
+    else
+        for k,v in pairs(default_args) do
+            if not args[k] then
+                args[k] = v
+            end
+        end
+    end
+
     return function()
-        rcmd = 'rofi -show ' .. run_str ..
-                   ' -matching regex -sorting-method fzf -run-command "echo {cmd}"'
+        local rcmd = 'rofi ' .. makeArgs(args, "-" , " ", " ") .. ' -run-command "echo {cmd}"'
+        print(rcmd)
         awful.spawn.easy_async(
             rcmd, function(out)
                 if out then
-                    print(out)
                     awful.spawn(out, rules)
                 end
             end

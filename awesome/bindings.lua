@@ -114,10 +114,11 @@ awful.keyboard.append_global_keybindings({
     key    ({ modkey,           }, "a"     , ut.spawn(const.terminal)                              , "open a terminal"),
     key    ({ modkey,           }, "b"     , ut.spawn(const.browser)                               , "launch Browser"),
     key    ({ modkey            }, "p"     , ut.raise_or_spawn("keepassxc")                                 , "keepass"),
-    key    ({ modkey            }, "r"     , ut.rofi(false), "run prompt"),
-    key    ({ modkey , "Shift"  }, "r"     , ut.rofi(true), "run prompt"),
-    key    ({ modkey            }, "d"     , ut.rofi(false, {floating = true}), "run prompt"),
-    key    ({ modkey , "Shift"  }, "d"     , ut.rofi(true, {floating = true}), "run prompt"),
+    key    ({ modkey            }, "r"     , ut.rofi(), "run prompt"),
+    key    ({ modkey            }, "g"     , ut.rofi({show = "drun", ['drun-categories'] = "Game"}), "run games"),
+    key    ({ modkey , "Shift"  }, "r"     , ut.rofi({show = "drun"}), "run prompt"),
+    key    ({ modkey            }, "d"     , ut.rofi(nil, {floating = true}), "run prompt"),
+    key    ({ modkey , "Shift"  }, "d"     , ut.rofi({show = "drun"}, {floating = true}), "run prompt"),
     group = "launcher"
 })
 
