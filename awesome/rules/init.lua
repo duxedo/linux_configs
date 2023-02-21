@@ -67,7 +67,7 @@ ruled.client.connect_signal(
         ruled.client.append_rule {
             id = 'im-clients',
             rule_any = {
-                class = { 'TelegramDesktop', 'Slack', 'discord', 'Signal', 'Skype' }
+                class = { 'TelegramDesktop', 'Slack', 'discord', 'Signal', 'Skype', 'Squadus' }
             },
             properties = { tags = { awful.screen.focused().tags[6] } }
         }

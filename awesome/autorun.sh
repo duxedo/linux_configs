@@ -23,6 +23,7 @@ fi
 run pa-applet
 run blueman-applet
 run telegram-desktop
+run squadus
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 #run discord
 run kdeconnect-indicator
