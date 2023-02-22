@@ -84,6 +84,7 @@ local tasklist_buttons =
      )
 
 local textclock = wibox.widget.textclock()
+textclock.halign = "center"
 local month_calendar = awful.widget.calendar_popup.month(
                            {
         style_header = { border_width = 0 },
@@ -118,9 +119,17 @@ screen.connect_signal(
         -- Each screen has its own tag table.
         -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
         local addtag = awful.tag.add
-        addtag('1', { layout = awful.layout.suit.tile, column_count = 2, screen = s }):view_only()
-        addtag('q', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        addtag('2', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        local default = function ()
+            return
+            {
+                layout = awful.layout.suit.tile,
+                column_count = 2,
+                screen = s,
+            }
+        end
+        addtag('1', default()):view_only()
+        addtag('q', default())
+        addtag('2', default())
         addtag(
             'w', {
                 layout = awful.layout.suit.tile,
@@ -129,7 +138,7 @@ screen.connect_signal(
                 screen = s
             }
         )
-        addtag('3', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('3', default())
         addtag(
             'e', {
                 layout = awful.layout.suit.tile,
@@ -138,35 +147,32 @@ screen.connect_signal(
                 screen = s
             }
         )
-        addtag('4', { layout = awful.layout.suit.tle, column_count = 2, screen = s })
-        addtag('5', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        addtag('6', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        addtag('7', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        addtag('8', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
-        addtag('9', { layout = awful.layout.suit.tile, column_count = 2, screen = s })
+        addtag('4', default())
+        addtag('5', default())
+        addtag('6', default())
+        addtag('7', default())
+        addtag('8', default())
+        addtag('9', default())
         -- Create a promptbox for each screen
         s.mypromptbox = awful.widget.prompt()
         -- Create an imagebox widget which will contains an icon indicating which layout we're using.
         -- We need one layoutbox per screen.
         s.mylayoutbox = awful.widget.layoutbox(s)
+        local function modLayout(dir)
+            return function()
+                awful.layout.inc(dir)
+            end
+        end
         s.mylayoutbox:buttons(
             gears.table.join(
                 awful.button(
-                    {}, 1, function()
-                        awful.layout.inc(1)
-                    end
+                    {}, 1, modLayout(1)
                 ), awful.button(
-                    {}, 3, function()
-                        awful.layout.inc(-1)
-                    end
+                    {}, 3, modLayout(-1)
                 ), awful.button(
-                    {}, 4, function()
-                        awful.layout.inc(1)
-                    end
+                    {}, 4, modLayout(1)
                 ), awful.button(
-                    {}, 5, function()
-                        awful.layout.inc(-1)
-                    end
+                    {}, 5, modLayout(-1)
                 )
             )
         )
