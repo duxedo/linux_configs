@@ -83,7 +83,7 @@ local tasklist_buttons =
         awful.button( {}, 5, function() awful.tag.viewprev() end)
      )
 
-local textclock = wibox.widget.textclock()
+local textclock = wibox.widget.textclock('%a %b\n%d\n%H:%M')
 textclock.halign = "center"
 local month_calendar = awful.widget.calendar_popup.month(
                            {
@@ -246,19 +246,24 @@ screen.connect_signal(
             widget_template = {
                 {
                     {
-                        layout = wibox.layout.align.horizontal,
-                        nil,
-                        nil,
+                        layout = wibox.layout.align.vertical,
                         {
                             awful.widget.clienticon,
-                            margins = 5,
+                            margins = 3,
                             widget = wibox.container.margin,
                             forced_width = 30,
                             forced_height = 30
-                        }
-                    },
+                        },
+                        nil,
                     {
-                        { id = 'text_role', widget = wibox.widget.textbox, wrap = 'char' },
+                        {
+                            id = 'text_role',
+                            wrap = 'char',
+                            visible = true,
+                            ellipsize = false,
+                            font      = "Sans 3",
+                            widget = wibox.widget.textbox,
+                        },
                         widget = function(widget)
                             return wibox.container.margin(widget, 5, 5)
                         end
@@ -276,27 +281,27 @@ screen.connect_signal(
                     )
                     return widget
                 end,
-                forced_height = 90
+                forced_height = 100
             }
         }
 
         -- Create the wibox
         s.mywibox = awful.wibar(
-                        {
+            {
                 position = 'left',
-                width = 108,
+                width = 57,
                 height = s.geometry.height,
                 screen = s,
                 visible = true,
                 opacity = 0.7
             }
-                    )
+        )
         -- Add widgets to the wibox
         s.mywibox:setup{
             layout = wibox.layout.align.vertical,
             { -- Top widgets
                 layout = wibox.layout.fixed.vertical,
-                { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 40 }
+                { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 90 }
             },
             s.mytasklist, -- Middle widget
             { -- Bottom widgets
@@ -307,18 +312,22 @@ screen.connect_signal(
                         {
                             layout = wibox.layout.align.horizontal,
                             s.mylayoutbox,
-                            weather_widget(
-                                {
-                                    api_key = constants.weather_api_key,
-                                    coordinates = { 60.004, 30.324 },
-                                    show_hourly_forecast = true,
-                                    show_daily_forecast = true
-                                }
-                            ),
                             mykeyboardlayout,
-                            forced_height = 22
+                            forced_height = 25
                         },
-                        { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
+                        weather_widget(
+                            {
+                                api_key = constants.weather_api_key,
+                                coordinates = { 60.004, 30.324 },
+                                show_hourly_forecast = true,
+                                show_daily_forecast = true
+                            }
+                        ),
+                        {
+                            widget = wibox.widget.systray,
+                            horizontal = false,
+                            base_size = 24
+                        }
                     },
                     widget = wibox.container.margin,
                     left = 2,
@@ -334,7 +343,7 @@ screen.connect_signal(
                     left = 4,
                     right = 4
                 },
-                { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock }
+                { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
             }
         }
 

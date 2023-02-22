@@ -12,7 +12,7 @@ local dpi = require("beautiful.xresources").apply_dpi
 local theme = {}
 --theme.wallpaper = current_path .. "/zenburn-background-5120.png"
 --theme.wallpaper = "/home/reinhardt/.config/wallpapers/wp7786809-5120x1440-wallpapers.png"
-theme.wallpaper = "/home/reinhardt/.config/wallpapers/2043630.png"
+theme.wallpaper = "/home/reinhardt/Pictures/2043630.png"
 -- }}}
 
 -- {{{ Styles
@@ -26,7 +26,7 @@ theme.bg_normal  = "#2F2F2F"
 theme.bg_focus   = "#101010"
 theme.bg_urgent  = "#3F3F3F"
 theme.bg_systray = theme.bg_normal
-theme.systray_max_rows = 4
+theme.systray_max_rows = 2
 -- }}}
 
 -- {{{ Borders

@@ -20,9 +20,11 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
   system-config-printer-applet &
 fi
 
+run dunst
 run blueman-applet
 run telegram-desktop
 run squadus
+run nm-applet
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 #run discord
 run kdeconnect-indicator
