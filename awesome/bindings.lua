@@ -83,6 +83,7 @@ local function focus_by_idx(i)
     movefocus(next_client)
 end
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 -- {{{ Key bindings
 awful.keyboard.append_global_keybindings({
     altkey ({ modkey, "Shift" }, "jk", awful.client.swap.byidx, "swap with next/previous client"),
@@ -98,6 +99,8 @@ awful.keyboard.append_global_keybindings({
 awful.keyboard.append_global_keybindings({
     key    ({}, "XF86AudioRaiseVolume"     ,  function() volume_widget:inc(5, true) end                             , "increase volume"),
     key    ({}, "XF86AudioLowerVolume"    ,  function() volume_widget:dec(5, true) end                             , "decrease volume"),
+    key    ({}, "XF86MonBrightnessUp"    ,  function() brightness_widget:inc() end                             , "increase brightness"),
+    key    ({}, "XF86MonBrightnessDown"    ,  function() brightness_widget:dec() end                             , "decrease brightness"),
     group = "media"
 })
 awful.keyboard.append_global_keybindings({
