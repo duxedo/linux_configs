@@ -20,7 +20,6 @@ if (command -v system-config-printer-applet && ! pgrep applet.py ); then
   system-config-printer-applet &
 fi
 
-run pa-applet
 run blueman-applet
 run telegram-desktop
 run squadus

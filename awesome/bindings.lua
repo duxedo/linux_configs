@@ -13,20 +13,24 @@ awful.mouse.append_global_mousebindings({
 modkey = const.modkey
 
 awful.key.keygroups["jk"] = {
-    {"j", 1},
-    {"k", -1}
+    {"j", -1},
+    {"k", 1}
 }
 awful.key.keygroups["hl"] = {
-    {"h", 1},
-    {"l", -1}
+    {"h", -1},
+    {"l", 1}
 }
 awful.key.keygroups["-="] = {
-    {"-", 1},
-    {"=", -1}
+    {"-", -1},
+    {"=", 1}
 }
 awful.key.keygroups["[]"] = {
     {"[", -1},
     {"]", 1}
+}
+awful.key.keygroups[",."] = {
+    {",", -1},
+    {".", 1}
 }
 local altkey = function (mods, keygroup, on_press, description, group)
     return awful.key {
@@ -78,6 +82,7 @@ local function focus_by_idx(i)
     local next_client = awful.client.next(i)
     movefocus(next_client)
 end
+local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 -- {{{ Key bindings
 awful.keyboard.append_global_keybindings({
     altkey ({ modkey, "Shift" }, "jk", awful.client.swap.byidx, "swap with next/previous client"),
@@ -85,12 +90,15 @@ awful.keyboard.append_global_keybindings({
     key    ({ modkey,           }, "u"     , awful.client.urgent.jumpto                           , "jump to urgent client"),
     key    ({ modkey,           }, "Tab"   , ut.prev                                              , "go back"),
     key    ({ modkey, "Control" }, "n"     , ut.restore_last_minimized                             , "restore minimized"),
-    altkey ({ modkey,           }, "-="    , function (d) ut.inc_opacity(-d * 0.1)() end           , "increase/decrease opacity"),
+    altkey ({ modkey,           }, "-="    , function (d) ut.inc_opacity(d * 0.1)() end           , "increase/decrease opacity"),
     key    ({ modkey, "Shift"   }, "n"     , ut.restore_minimized_menu                             , "restore minimized menu"),
     key    ({ modkey            }, "c"     , ut.jump_to_hidden_client                              , "jump to hidden client"),
---    key    ({}, "XF86AudioRaiseVolume"     , ut.spawn("pactl set-sink-volume @DEFAULT_SINK@ +5%")                              , "increase volume"),
---    key    ({}, "XF86AudioLowerVolume "    , ut.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%")                              , "decrease volume"),
     group = "client"
+})
+awful.keyboard.append_global_keybindings({
+    key    ({}, "XF86AudioRaiseVolume"     ,  function() volume_widget:inc(5, true) end                             , "increase volume"),
+    key    ({}, "XF86AudioLowerVolume"    ,  function() volume_widget:dec(5, true) end                             , "decrease volume"),
+    group = "media"
 })
 awful.keyboard.append_global_keybindings({
     key    ({ modkey }, "Escape"           , function() awful.tag.history.restore(nil, 1) end   , "go back"),
@@ -127,11 +135,10 @@ awful.keyboard.append_global_keybindings({
     group = "utility"
 })
 awful.keyboard.append_global_keybindings({
-    altkey ({ modkey            }, "hl"    , function (d) awful.tag.incmwfact( -d * 0.005) end      , "increase/decrease master width factor"),
-    altkey ({ modkey, "Shift"   }, "hl"    , function (d) awful.tag.incnmaster( -d, nil, true) end  , "increase/decrease the number of master clients"),
-    altkey ({ modkey, "Control" }, "hl"    , function (d) awful.tag.incncol( -d, nil, true) end     , "increase/decrease the number of columns"),
-    key    ({ modkey, "Shift"   }, ","     , function () awful.layout.inc(-1) end                   , "select previous"),
-    key    ({ modkey, "Shift"   }, "."     , function () awful.layout.inc(1) end                   , "select previous"),
+    altkey ({ modkey            }, "hl"    , function (d) awful.tag.incmwfact( d * 0.005) end      , "increase/decrease master width factor"),
+    altkey ({ modkey, "Shift"   }, "hl"    , function (d) awful.tag.incnmaster( d, nil, true) end  , "increase/decrease the number of master clients"),
+    altkey ({ modkey, "Control" }, "hl"    , function (d) awful.tag.incncol( d, nil, true) end     , "increase/decrease the number of columns"),
+    altkey ({ modkey, "Shift"   }, ",."    , awful.layout.inc                                       , "previous/next"),
     group = "layout"
 })
 awful.keyboard.append_global_keybindings({

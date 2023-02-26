@@ -8,6 +8,7 @@ local gears = require('gears')
 local constants = require('constants')
 
 local weather_widget = require('awesome-wm-widgets.weather-widget.weather')
+volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -309,13 +310,23 @@ screen.connect_signal(
                                 }
                             ),
                             mykeyboardlayout,
-                            forced_height = 25
+                            forced_height = 22
                         },
-                        { widget = wibox.widget.systray, horizontal = true, base_size = 25 }
+                        { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
                     },
                     widget = wibox.container.margin,
-                    left = 3,
-                    right = 3
+                    left = 2,
+                    right = 2
+                },
+                {
+                    {
+                        layout = wibox.layout.fixed.horizontal,
+                        volume_widget.create{device = "pipewire", widget_type = "horizontal_bar"},
+                        forced_height = 25,
+                    },
+                    widget = wibox.container.margin,
+                    left = 4,
+                    right = 4
                 },
                 { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock }
             }
