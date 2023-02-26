@@ -8,7 +8,9 @@ local gears = require('gears')
 local constants = require('constants')
 
 local weather_widget = require('awesome-wm-widgets.weather-widget.weather')
-volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local battery_widget = require('awesome-wm-widgets.battery-widget.battery')
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -184,8 +186,8 @@ screen.connect_signal(
             buttons = taglist_buttons,
             base_layout = {
                 layout = wibox.layout.grid,
-                forced_num_rows = 2,
-                forced_num_cols = 6,
+                forced_num_rows = 6,
+                forced_num_cols = 3,
                 homogenous = true,
                 expand = true
             },
@@ -244,7 +246,6 @@ screen.connect_signal(
                 end
             },
             widget_template = {
-                {
                     {
                         layout = wibox.layout.align.vertical,
                         {
@@ -268,7 +269,6 @@ screen.connect_signal(
                             return wibox.container.margin(widget, 5, 5)
                         end
                     },
-                    layout = wibox.layout.fixed.vertical
                 },
                 id = 'background_role',
                 widget = function(widget)
@@ -313,6 +313,12 @@ screen.connect_signal(
                             layout = wibox.layout.align.horizontal,
                             s.mylayoutbox,
                             mykeyboardlayout,
+                            forced_height = 25
+                        },
+                        {
+                            layout = wibox.layout.align.horizontal,
+                            battery_widget(),
+                            brightness_widget(),
                             forced_height = 25
                         },
                         weather_widget(
