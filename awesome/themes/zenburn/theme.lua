@@ -149,6 +149,13 @@ end)
 
 theme.wibox_width=110
 
+local gears = require('gears')
+theme.hotkeys_shape = function(cr, width, height)
+    gears.shape.partially_rounded_rect(
+        cr, width, height, true, true, true, true, 10
+    )
+end
+theme.hotkeys_border_color = '#333333'
 return theme
 
 -- vim: filetype=lua:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:textwidth=80

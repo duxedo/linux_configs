@@ -1,8 +1,24 @@
 local awful = require('awful')
 local inspect = require('inspect')
 
-utils = {}
+local utils = {}
 
+local audio_profiles = {
+    profiles = {
+        "pactl set-card-profile 41 output:iec958-stereo+input:analog-stereo",
+        "pactl set-card-profile 41 output:analog-stereo+input:analog-stereo"
+    },
+    current = 0
+}
+function utils.toggle_audio_profile()
+    audio_profiles.current = audio_profiles.current + 1
+    audio_profiles.current = audio_profiles.current % #(audio_profiles.profiles)
+    awful.spawn(audio_profiles.profiles[audio_profiles.current + 1])
+end
+function utils.toggle_wibar()
+    scr = awful.screen.focused()
+    scr.mywibox.visible = not scr.mywibox.visible
+end
 function utils.prevfocus()
     awful.client.focus.history.previous()
     if client.focus then
@@ -66,6 +82,69 @@ function utils.add_hidden_client()
     )
 end
 
+function utils.resize(dir, c)
+    local w = 0
+    local h = 0
+    local resize_constant = 40
+    if dir == "Up" then
+        h = resize_constant
+    elseif dir == "Down" then
+        h = -resize_constant
+    elseif dir == "Left" then
+        w = -resize_constant
+    else
+        w = resize_constant
+    end
+    c:relative_move(-w,-h, 2*w, 2*h)
+end
+
+function utils.move(dir, c)
+    local x = 0
+    local y = 0
+    local resize_constant = 80
+    if dir == "Up" then
+        y = -resize_constant
+    elseif dir == "Down" then
+        y = resize_constant
+    elseif dir == "Left" then
+        x = -resize_constant
+    else
+        x = resize_constant
+    end
+    c:relative_move(x,y, 0, 0)
+end
+function utils.movefocus(next_client)
+    local prev_client = client.focus
+    local prev_client_box = prev_client and { x = prev_client.x, y = prev_client.y, w = prev_client.width, h = prev_client.height } or nil
+    next_client:emit_signal("request::activate", "movefocus",
+                       {raise=true})
+
+    local coords = mouse.coords()
+
+    if prev_client_box ~= nil then
+        coords.x = coords.x - prev_client_box.x
+        coords.x = coords.x / prev_client_box.w
+        coords.y = coords.y - prev_client_box.y
+        coords.y = coords.y / prev_client_box.h
+    else
+        coords = { x = 0.5, y = 0.5 }
+    end
+
+    if coords.y < 0 or coords.y > 1 or coords.x < 0 or coords.x > 1 then
+      return
+    end
+
+    coords.y = coords.y * next_client.height
+    coords.y = coords.y + next_client.y
+    coords.x = coords.x * next_client.width
+    coords.x = coords.x + next_client.x
+    mouse.coords(coords, true) -- x,y, silent (don't fire signals such as enter/leave)
+end
+
+function utils.focus_by_idx(i)
+    local next_client = awful.client.next(i)
+    utils.movefocus(next_client)
+end
 local function makeArgs(args, prefix, arg_sep, sep)
     local args_str = ""
     for k, v in pairs(args) do
@@ -145,6 +224,75 @@ function utils.inc_opacity(amount)
             end
         end
     end
+end
+
+function utils.view_tag(index)
+    local screen = awful.screen.focused()
+    local tag = screen.tags[index]
+    if tag then
+        tag:view_only()
+    end
+end
+function utils.toggle_tag(index)
+    local screen = awful.screen.focused()
+    local tag = screen.tags[index]
+    if tag then
+        awful.tag.viewtoggle(tag)
+    end
+end
+function utils.move_to_tag(index)
+    if client.focus then
+        local tag = client.focus.screen.tags[index]
+        if tag then
+            client.focus:move_to_tag(tag)
+        end
+    end
+end
+function utils.move_and_switch(index)
+    if client.focus then
+        local tag = client.focus.screen.tags[index]
+        if tag then
+            client.focus:move_to_tag(tag)
+            tag:view_only()
+        end
+    end
+end
+function utils.toggle_client_on_tag(index)
+    if client.focus then
+        local tag = client.focus.screen.tags[index]
+        if tag then
+            client.focus:toggle_tag(tag)
+        end
+    end
+end
+
+function utils.key(mods, key, on_press, description, group)
+    return awful.key {
+        modifiers   = mods,
+        keygroup    = type(key) == 'table' and key[1] or nil,
+        key         = type(key) == 'string' and key,
+        description = description,
+        group       = group,
+        on_press    = on_press,
+    }
+end
+
+function utils.register_bindings(binder, groups)
+    for groupname, group in pairs(groups) do
+        local bindings = {}
+        for _, keydef in pairs(group) do
+            table.insert(bindings, utils.key(keydef[1], keydef[2], keydef[3], keydef[4], groupname))
+        end
+        binder(bindings)
+    end
+end
+
+function utils.register_global_bindings(groups)
+    utils.register_bindings(awful.keyboard.append_global_keybindings, groups)
+end
+
+function utils.register_client_bindings(groups)
+    utils.register_bindings(awful.keyboard.append_client_keybindings, groups)
 end
 
 utils.client_props = {
