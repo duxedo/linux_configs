@@ -45,7 +45,8 @@ ruled.client.connect_signal(
                     'calc',
                     'evelauncher.exe',
                     'zoom',
-                    'RPCS3'
+                    'RPCS3',
+                    'Pavucontrol'
                 },
                 -- Note that the name property shown in xprop might be set slightly after creation of the client
                 -- and the name shown there might not match defined rules here.
@@ -78,6 +79,31 @@ ruled.client.connect_signal(
                 class = { 'Steam', 'Lutris', 'battle.net.exe', 'Origin', 'gamescope' }
             },
             properties = { tags = { awful.screen.focused().tags[2] } }
+        }
+
+        ruled.client.append_rule {
+            id = 'disable-ctrl-shift-c',
+            rule_any = {
+                class = { 'firefox' }
+            },
+            callback = function (c)
+                c:append_keybinding(
+                    awful.key {
+                        modifiers   = { "Control", "Shift" },
+                        key         = "c",
+                        description = "disable firefox debug console",
+                        group       = "fixes",
+                        on_press    = function () end,
+                        on_release    = function ()
+                            local root = require("root")
+                            root.fake_input("key_press", "Control_L")
+                            root.fake_input("key_press", "c")
+                            root.fake_input("key_release", "c")
+                            root.fake_input("key_release", "Control_L")
+                        end,
+                    }
+                )
+            end
         }
 
         ruled.client.append_rule {
@@ -119,8 +145,8 @@ ruled.client.connect_signal(
         }
 
         ruled.client.append_rule {
-            id = 'dialogs',
-            rule = { type = 'dialog' },
+            id = 'centered',
+            rule_any = { type = {'dialog'}, class = {'Pavucontrol'} },
             callback = function(c)
                 awful.placement.centered(c, nil)
             end
