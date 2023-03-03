@@ -83,7 +83,9 @@ local tasklist_buttons =
         awful.button( {}, 5, function() awful.tag.viewprev() end)
      )
 
-local textclock = wibox.widget.textclock()
+local textclock = wibox.widget.textclock('%a %d.%m, %H:%M')
+textclock.halign = 'center'
+textclock.forced_width = theme.wibox_width
 local month_calendar = awful.widget.calendar_popup.month(
                            {
         style_header = { border_width = 0 },
@@ -276,15 +278,15 @@ screen.connect_signal(
 
         -- Create the wibox
         s.mywibox = awful.wibar(
-                        {
+            {
                 position = 'left',
-                width = 108,
+                width = theme.wibox_width,
                 height = s.geometry.height,
                 screen = s,
                 visible = true,
                 opacity = 0.7
             }
-                    )
+        )
         -- Add widgets to the wibox
         s.mywibox:setup{
             layout = wibox.layout.align.vertical,
@@ -328,12 +330,12 @@ screen.connect_signal(
                     left = 4,
                     right = 4
                 },
-                { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock }
+                { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock,  }
             }
         }
 
-        s.langbox = wibox(
-                        {
+        s.langbox = wibox (
+            {
                 position = 'top',
                 x = 40,
                 y = s.geometry.height - 40,
@@ -345,7 +347,7 @@ screen.connect_signal(
                 restrict_workarea = false,
                 type = 'menu'
             }
-                    )
+        )
         s.langbox:setup{ layout = wibox.layout.align.horizontal, mykeyboardlayout }
     end
 )
