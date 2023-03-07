@@ -5,6 +5,7 @@ local beautiful = require('beautiful')
 local wibox = require('wibox')
 local games = require('rules.games')
 local work = require('rules.work')
+local constants = require('constants')
 
 ruled.client.connect_signal(
     'request::rules', function()
@@ -68,10 +69,20 @@ ruled.client.connect_signal(
         ruled.client.append_rule {
             id = 'im-clients',
             rule_any = {
-                class = { 'TelegramDesktop', 'Slack', 'discord', 'Signal', 'Skype', 'Squadus' }
+                class = { 'TelegramDesktop', 'Slack', 'discord', 'Signal', 'Skype', constants.notebook and nil or 'Squadus' }
             },
             properties = { tags = { awful.screen.focused().tags[6] } }
         }
+
+        if constants.notebook then
+            ruled.client.append_rule {
+                id = 'squadus',
+                rule = {
+                    class = 'Squadus',
+                },
+                properties = { tags = { awful.screen.focused().tags[7] } }
+            }
+        end
 
         ruled.client.append_rule {
             id = 'game-launchers',

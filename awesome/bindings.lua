@@ -3,6 +3,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 local vimkeys = require("hotkeys.nvim")
 local const = require("constants")
 local ut = require("utils")
+local constants = require("constants")
 
 local modkey = const.modkey
 
@@ -52,6 +53,7 @@ local hotkeys = hotkeys_popup.new {
 vimkeys(hotkeys)
 
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 -- {{{ Key bindings
 local mod =  { modkey }
 local modc = { modkey, "Control" }
@@ -70,11 +72,15 @@ client = {
     { mod  , "c"     , ut.jump_to_hidden_client                   , "jump to hidden client"},
 },
 media = {
-    {{}, "XF86AudioRaiseVolume", function() volume_widget:inc(5, true) end , "increase volume"},
-    {{}, "XF86AudioLowerVolume", function() volume_widget:dec(5, true) end , "decrease volume"},
-    {{}, "XF86AudioMute"       , function() volume_widget:toggle() end     , "mute"},
-    { mod, "F10"               , ut.toggle_autdo_profile                   , "toggle audio profile"},
+    {{}, "XF86AudioRaiseVolume"      , function() volume_widget:inc(5, true) end     , "increase volume"},
+    {{}, "XF86AudioLowerVolume"      , function() volume_widget:dec(5, true) end     , "decrease volume"},
+    {{}, "XF86AudioMute"             , function() volume_widget:toggle() end         , "mute"},
+    {{modkey}, "F10"                 , ut.toggle_autdo_profile                       , "toggle audio profile"},
 },
+brightness = constants.notebook and {
+    {{}, "XF86MonBrightnessUp"       ,  function() brightness_widget:inc() end       , "increase brightness"},
+    {{}, "XF86MonBrightnessDown"     ,  function() brightness_widget:dec() end       , "decrease brightness"},
+} or nil,
 notifications = {
     { mod,  "v"     , ut.spawn("dunstctl close-all")        , "close all"},
     { modc, "v"     , ut.spawn("dunstctl history-pop")      , "hitory"},

@@ -10,6 +10,7 @@ local wibox = require('wibox')
 local beautiful = require('beautiful')
 require('awful.autofocus')
 local hotkeys_popup = require('awful.hotkeys_popup').widget
+local constants = require('constants')
 -- Lain
 local lain = require('lain')
 
@@ -53,8 +54,11 @@ naughty.connect_signal(
         end
     end
 )
-
-beautiful.init(awful.util.getdir('config') .. '/themes/zenburn/theme.lua')
+if constants.notebook then
+    beautiful.init(awful.util.getdir('config') .. '/themes/zenburn_notebook/theme.lua')
+else
+    beautiful.init(awful.util.getdir('config') .. '/themes/zenburn/theme.lua')
+end
 beautiful.notification_font = 'Noto Sans Regular 16'
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
