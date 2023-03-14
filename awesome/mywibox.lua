@@ -361,7 +361,7 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.vertical,
-                        sensors(),
+                        constants.sensors_format and sensors(constants.sensors_format),
                         {
                             layout = wibox.layout.align.horizontal,
                             s.mylayoutbox,
