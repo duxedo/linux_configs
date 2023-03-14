@@ -6,11 +6,15 @@ local beautiful = require('beautiful')
 local theme = beautiful.get()
 local gears = require('gears')
 local constants = require('constants')
+local sensors = require('widgets.sensors')
 
 local weather_widget = require('awesome-wm-widgets.weather-widget.weather')
 local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
 local battery_widget = require('awesome-wm-widgets.battery-widget.battery')
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
+local cpu_widget = require('awesome-wm-widgets.cpu-widget.cpu-widget')
+local ram_widget = require('widgets.ram-widget')
+local modkey = constants.modkey
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- }}}
@@ -32,35 +36,27 @@ local function client_menu_toggle_fn()
     end
 end
 -- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-                            awful.button(
-                                {}, 1, function(t)
-            t:view_only()
-        end
-                            ), awful.button(
-                                { modkey }, 1, function(t)
+local taglist_buttons =
+gears.table.join(
+    awful.button( {}, 1, function(t) t:view_only() end),
+    awful.button( { modkey }, 1,
+        function(t)
             if client.focus then
                 client.focus:move_to_tag(t)
             end
-        end
-                            ), awful.button({}, 3, awful.tag.viewtoggle), awful.button(
-                                { modkey }, 3, function(t)
+        end),
+    awful.button({}, 3, awful.tag.viewtoggle),
+    awful.button( { modkey }, 3,
+        function(t)
             if client.focus then
                 client.focus:toggle_tag(t)
             end
-        end
-                            ), awful.button(
-                                {}, 4, function(t)
-            awful.tag.viewnext(t.screen)
-        end
-                            ), awful.button(
-                                {}, 5, function(t)
-            awful.tag.viewprev(t.screen)
-        end
-                            )
-                        )
+        end),
+    awful.button( {}, 4, function(t) awful.tag.viewnext(t.screen) end),
+    awful.button( {}, 5, function(t) awful.tag.viewprev(t.screen) end)
+)
 
-local tasklist_buttons = 
+local tasklist_buttons =
     gears.table.join(
         awful.button( {}, 1,
             function(c)
@@ -350,12 +346,14 @@ screen.connect_signal(
             wibar_args
         )
         local wibox_cfg = nil
-        local wibox_cfg = not constants.notebook and 
+        local wibox_cfg = not constants.notebook and
         {
             layout = wibox.layout.align.vertical,
             { -- Top widgets
                 layout = wibox.layout.fixed.vertical,
-                { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 40 }
+                { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 40 },
+                cpu_widget(),
+                ram_widget(),
             },
             s.mytasklist, -- Middle widget
             { -- Bottom widgets
@@ -363,6 +361,7 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.vertical,
+                        sensors(),
                         {
                             layout = wibox.layout.align.horizontal,
                             s.mylayoutbox,
@@ -371,7 +370,8 @@ screen.connect_signal(
                                     api_key = constants.weather_api_key,
                                     coordinates = { 60.004, 30.324 },
                                     show_hourly_forecast = true,
-                                    show_daily_forecast = true
+                                    show_daily_forecast = true,
+                                    timeout = 600
                                 }
                             ),
                             mykeyboardlayout,
