@@ -1,11 +1,8 @@
-local wibox = require('wibox')
 local awful = require('awful')
-local textbox = require("wibox.widget.textbox")
 local json = require("json")
 
 local function create(format_callback)
-    local widget = textbox()
-    widget.font = "Fira Code 10"
+    local widget = format_callback(nil, nil)
     local cbk = function (widget, stdout, stderr, exitreason, exitcode)
         if exitcode ~= 0 then
             return
