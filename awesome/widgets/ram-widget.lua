@@ -99,8 +99,8 @@ local function worker(user_args)
     --luacheck:ignore 231
     local total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap
 
-    local function getPercentage(value)
-        return math.floor(value / (total+total_swap) * 100 + 0.5) .. '%'
+    local function getPercentage(value, total)
+        return math.floor(value / (total) * 100 + 0.5) .. '%'
     end
 
     watch('bash -c "LANGUAGE=en_US.UTF-8 free | grep -z Mem.*Swap.*"', timeout,
@@ -111,9 +111,9 @@ local function worker(user_args)
             swap_progress.value = used_swap / (used_swap + free_swap)
             if popup.visible then
                popup:get_widget().data_list = {
-                  {'used ' .. getPercentage(used), used},
-                  {'free ' .. getPercentage(free), free},
-                  {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
+                  {'used ' .. getPercentage(used, total), used},
+                  {'free ' .. getPercentage(free, total), free},
+                  {'buff_cache ' .. getPercentage(buff_cache, total), buff_cache}
                 }
             end
         end,
@@ -124,9 +124,9 @@ local function worker(user_args)
         awful.util.table.join(
            awful.button({}, 1, function()
                  popup:get_widget().data_list = {
-                    {'used ' .. getPercentage(used), used},
-                    {'free ' .. getPercentage(free), free},
-                    {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
+                    {'used ' .. getPercentage(used, total), used},
+                    {'free ' .. getPercentage(free, total), free},
+                    {'buff_cache ' .. getPercentage(buff_cache, total), buff_cache}
                 }
 
                 if popup.visible then
