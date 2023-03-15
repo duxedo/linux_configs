@@ -23,18 +23,18 @@ local function worker(user_args)
         color = {
            type = "linear",
            from = { 0, 0 },
-           to   = { 100, 0},
+           to   = { 100, 0 },
            stops = {
-              {0, color_used},
-              { 0.33, color_used},
-              { 0.33, color_buf},
-              { 0.66, color_buf},
-              { 0.68, color_free},
-              { 1, color_free},
+              { 0, color_used },
+              { 0.33, color_used },
+              { 0.33, color_buf },
+              { 0.66, color_buf },
+              { 0.68, color_free },
+              { 1, color_free },
            }
         },
         max_value = 1,
-        paddings = { top = 4, bottom = 2, left = 2 , right = 2 },
+        paddings = { top = 8, bottom = 8, left = 2 , right = 2 },
         background_color = "#00000000",
         display_labels = false,
         value = 1,
@@ -48,12 +48,12 @@ local function worker(user_args)
                from = { 0, 0 },
                to   = { 100, 0},
                stops = {
-                  {0, color_used},
-                  { used_stop, color_used},
-                  { used_stop, color_buf},
-                  { cached_stop, color_buf},
-                  { cached_stop, color_free},
-                  { 1, color_free},
+                  { 0, color_used },
+                  { used_stop, color_used },
+                  { used_stop, color_buf },
+                  { cached_stop, color_buf },
+                  { cached_stop, color_free },
+                  { 1, color_free },
                }
             }
         end
@@ -61,9 +61,9 @@ local function worker(user_args)
 
     local swap_progress = wibox.widget{
         widget = wibox.widget.progressbar,
-        paddings = { top = 2, bottom = 4, left = 2 , right = 2 },
+        paddings = { top = 11, bottom = 11, left = 2 , right = 2 },
         background_color = "#00000000",
-        color = color_used
+        color = "#000000"
     }
 
 
@@ -72,7 +72,7 @@ local function worker(user_args)
        swap_progress,
        forced_height = widget_height,
        forced_width = widget_width,
-       layout  = wibox.layout.flex.vertical,
+       layout  = wibox.layout.stack,
        ram_bar = progressbar
     }
 
