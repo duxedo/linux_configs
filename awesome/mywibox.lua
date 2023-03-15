@@ -352,8 +352,8 @@ screen.connect_signal(
             { -- Top widgets
                 layout = wibox.layout.fixed.vertical,
                 { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 40 },
-                cpu_widget(),
-                ram_widget(),
+                cpu_widget{ timeout = 2 },
+                ram_widget{ timeout = 2 },
             },
             s.mytasklist, -- Middle widget
             { -- Bottom widgets
