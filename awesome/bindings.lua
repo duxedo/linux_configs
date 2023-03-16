@@ -140,7 +140,7 @@ client.connect_signal("request::default_keybindings", function(context)
     ut.register_client_bindings{
         client = {
             { mod , "f", ut.fullscreen, "toggle fullscreen"},
-            { mod  , "x",      function (c) awful.client.focus.history.previous() c:kill() end, "close"},
+            { mod  , "x",      function (c) c:kill() end, "close"},
             { modc ,  "space",  awful.client.floating.toggle, "toggle floating"},
             { modc,  "Return", function (c) c:swap(awful.client.getmaster()) end, "move to master"},
             { mod , "t",      function (c) c.ontop = not c.ontop            end, "toggle keep on top"},
