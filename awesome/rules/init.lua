@@ -146,8 +146,6 @@ ruled.client.connect_signal(
                 end
             end
         }
-        -- @DOC_DIALOG_RULE@
-        -- Add titlebars to normal clients and dialogs
         ruled.client.append_rule {
             -- @DOC_CSD_TITLEBARS@
             id = 'titlebars',
@@ -156,11 +154,16 @@ ruled.client.connect_signal(
         }
 
         ruled.client.append_rule {
-            id = 'centered',
+            id = 'dialogs',
             rule_any = { type = {'dialog'}, class = {'Pavucontrol'} },
             callback = function(c)
                 awful.placement.centered(c, nil)
-            end
+            end,
+            properties = {
+                buttons = {
+                    awful.button({ }, 2, function (c) c:kill() end)
+                }
+            }
         }
         ruled.client.append_rule {
             id = 'noborder',
