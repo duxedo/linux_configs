@@ -1,7 +1,6 @@
 local wibox = require('wibox')
 local menubar = require('menubar')
 local awful = require('awful')
-local lain = require('lain')
 local beautiful = require('beautiful')
 local theme = beautiful.get()
 local gears = require('gears')
@@ -16,11 +15,11 @@ local cpu_widget = require('awesome-wm-widgets.cpu-widget.cpu-widget')
 local ram_widget = require('widgets.ram-widget')
 local modkey = constants.modkey
 -- Menubar configuration
-menubar.utils.terminal = terminal -- Set the terminal for applications that require it
+menubar.utils.terminal = constants.terminal -- Set the terminal for applications that require it
 -- }}}
 
 -- Keyboard map indicator and switcher
-mykeyboardlayout = awful.widget.keyboardlayout()
+local mykeyboardlayout = awful.widget.keyboardlayout()
 -- {{{ Wibar
 
 local function client_menu_toggle_fn()
@@ -75,9 +74,9 @@ local tasklist_buttons =
                     c:raise()
                 end
             end),
-        awful.button( {}, 2, function(c) c:kill() end), 
+        awful.button( {}, 2, function(c) c:kill() end),
         awful.button({}, 3, client_menu_toggle_fn()),
-        awful.button( {}, 4, function() awful.tag.viewnext() end), 
+        awful.button( {}, 4, function() awful.tag.viewnext() end),
         awful.button( {}, 5, function() awful.tag.viewprev() end)
      )
 local textclock = nil
@@ -99,7 +98,7 @@ local month_calendar = awful.widget.calendar_popup.month(
 
 local langbox_timer = gears.timer { timeout = 0.5 }
 
-function show_langbox(show)
+local function show_langbox(show)
     return function()
         langbox_timer:stop()
         for s in screen do
@@ -206,7 +205,7 @@ screen.connect_signal(
                 id = 'background_role',
                 widget = wibox.container.background,
                 -- Add support for hover colors and an index label
-                create_callback = function(self, c3, index, tags)
+                create_callback = function(self, c3, _ , _) --index, tags)
                     self.label = self.label or self:get_children_by_id('label_role')[1]
                     self.label.markup = '<b>' .. c3.name .. '</b>'
                     self:connect_signal(
@@ -226,7 +225,7 @@ screen.connect_signal(
                         end
                     )
                 end,
-                update_callback = function(self, c3, index, tags)
+                update_callback = function(self, c3, _, _) --index, tags)
                     self.label.markup = '<b>' .. c3.name .. '</b>'
                 end
             }
@@ -345,7 +344,6 @@ screen.connect_signal(
         s.mywibox = awful.wibar(
             wibar_args
         )
-        local wibox_cfg = nil
         local wibox_cfg = not constants.notebook and
         {
             layout = wibox.layout.align.vertical,
@@ -386,7 +384,11 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.horizontal,
-                        volume_widget.create{device = "pipewire", widget_type = "horizontal_bar"},
+                        volume_widget.create{
+                            device = "pipewire",
+                            widget_type = "horizontal_bar",
+                            mixer_cmd = 'pavucontrol -t 5'
+                        },
                         forced_height = 25,
                     },
                     widget = wibox.container.margin,
@@ -440,7 +442,11 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.horizontal,
-                        volume_widget.create{device = "pipewire", widget_type = "horizontal_bar"},
+                        volume_widget.create{
+                            device = "pipewire",
+                            widget_type = "horizontal_bar",
+                            mixer_cmd = 'pavucontrol -t 5'
+                        },
                         forced_height = 25,
                     },
                     widget = wibox.container.margin,
