@@ -7,6 +7,9 @@ local constants = require("constants")
 
 local modkey = const.modkey
 
+local bindings = {
+}
+
 awful.key.keygroups["jk"] = {
     {"j", -1},
     {"k", 1}
@@ -52,7 +55,7 @@ local hotkeys = hotkeys_popup.new {
 
 vimkeys(hotkeys)
 
-local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local volume_widget = require('widgets.pactl-widget.volume')
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 -- {{{ Key bindings
 local mod =  { modkey }
@@ -74,7 +77,7 @@ client = {
 media = {
     {{}, "XF86AudioRaiseVolume"      , function() volume_widget:inc(5, true) end     , "increase volume"},
     {{}, "XF86AudioLowerVolume"      , function() volume_widget:dec(5, true) end     , "decrease volume"},
-    {{}, "XF86AudioMute"             , function() volume_widget:toggle() end         , "mute"},
+    {{}, "XF86AudioMute"             , function() volume_widget:toggle(true) end     , "mute"},
     {{modkey}, "F10"                 , ut.toggle_autdo_profile                       , "toggle audio profile"},
 },
 brightness = constants.notebook and {
@@ -135,7 +138,6 @@ tags = {
 }
 }
 
-
 client.connect_signal("request::default_keybindings", function(context)
     ut.register_client_bindings{
         client = {
@@ -144,6 +146,11 @@ client.connect_signal("request::default_keybindings", function(context)
             { modc ,  "space",  awful.client.floating.toggle, "toggle floating"},
             { modc,  "Return", function (c) c:swap(awful.client.getmaster()) end, "move to master"},
             { mod , "t",      function (c) c.ontop = not c.ontop            end, "toggle keep on top"},
+            { mods, "t",
+            function (c)
+                c.ontop = not c.ontop
+                c.sticky = c.ontop
+            end, "toggle keep on top"},
             { mod , "n", function (c) c.minimized = true end , "minimize"},
             { mod , {"[]"}, function (d, c) awful.client.incwfact(0.05 * d, c) end , "dec/inc size factor"},
             { mod , "m", ut.maximize(), "(un)maximize"},
@@ -171,18 +178,19 @@ end)
     --}
 --})
 
+bindings.client_bindings = {
+    awful.button({ }, 1, function (c)
+        c:activate { context = "mouse_click" }
+    end),
+    awful.button( mod, 1, function (c)
+        c:activate { context = "mouse_click", action = "mouse_move"  }
+    end),
+    awful.button( mod, 3, function (c)
+        c:activate { context = "mouse_click", action = "mouse_resize"}
+    end),
+}
 client.connect_signal("request::default_mousebindings", function()
-    awful.mouse.append_client_mousebindings {
-        awful.button({ }, 1, function (c)
-            c:activate { context = "mouse_click" }
-        end),
-        awful.button( mod, 1, function (c)
-            c:activate { context = "mouse_click", action = "mouse_move"  }
-        end),
-        awful.button( mod, 3, function (c)
-            c:activate { context = "mouse_click", action = "mouse_resize"}
-        end),
-    }
+    awful.mouse.append_client_mousebindings (bindings.client_bindings)
 end)
 
 --local function stop(cbk)
@@ -205,3 +213,4 @@ end)
 --    },
 --    keypressed_callback = function(self, mod, key, event) debug_message("" .. key) end
 --}
+return bindings

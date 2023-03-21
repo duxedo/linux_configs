@@ -8,7 +8,7 @@ local constants = require('constants')
 local sensors = require('widgets.sensors')
 
 local weather_widget = require('awesome-wm-widgets.weather-widget.weather')
-local volume_widget = require('awesome-wm-widgets.volume-widget.volume')
+local volume_widget = require('widgets.pactl-widget.volume')
 local battery_widget = require('awesome-wm-widgets.battery-widget.battery')
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
 local cpu_widget = require('awesome-wm-widgets.cpu-widget.cpu-widget')
@@ -359,6 +359,7 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.vertical,
+                        wibox.widget.textbox("memo:\nuse fd"),
                         constants.sensors_format and sensors(constants.sensors_format),
                         {
                             layout = wibox.layout.align.horizontal,
@@ -384,8 +385,8 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.horizontal,
-                        volume_widget.create{
-                            device = "pipewire",
+                        volume_widget{
+                            --device = "pipewire",
                             widget_type = "horizontal_bar",
                             mixer_cmd = 'pavucontrol -t 5'
                         },
@@ -442,8 +443,8 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.horizontal,
-                        volume_widget.create{
-                            device = "pipewire",
+                        volume_widget{
+                            --device = "pipewire",
                             widget_type = "horizontal_bar",
                             mixer_cmd = 'pavucontrol -t 5'
                         },

@@ -3,16 +3,14 @@ local ruled = require('ruled')
 local gears = require('gears')
 local beautiful = require('beautiful')
 local wibox = require('wibox')
-local games = require('rules.games')
-local work = require('rules.work')
 local constants = require('constants')
+local bindings = require('bindings')
 
 ruled.client.connect_signal(
     'request::rules', function()
         -- @DOC_GLOBAL_RULE@
         -- All clients will match this rule.
         ruled.client.append_rule {
-
             id = 'global',
             rule = {},
             except = { name = 'Origin' },
@@ -47,7 +45,8 @@ ruled.client.connect_signal(
                     'evelauncher.exe',
                     'zoom',
                     'RPCS3',
-                    'Pavucontrol'
+                    'Pavucontrol',
+                    'Blueman-manager'
                 },
                 -- Note that the name property shown in xprop might be set slightly after creation of the client
                 -- and the name shown there might not match defined rules here.
@@ -63,13 +62,23 @@ ruled.client.connect_signal(
                     'pop-up' -- e.g. Google Chrome's (detached) Developer Tools.
                 }
             },
-            properties = { floating = true, titlebars_enabled = false }
+            properties = {
+                floating = true,
+                titlebars_enabled = false
+            }
         }
 
         ruled.client.append_rule {
             id = 'im-clients',
             rule_any = {
-                class = { 'TelegramDesktop', 'Slack', 'discord', 'Signal', 'Skype', constants.notebook and nil or 'Squadus' }
+                class = {
+                    'TelegramDesktop',
+                    'Slack',
+                    'discord',
+                    'Signal',
+                    'Skype',
+                    constants.notebook and nil or 'Squadus'
+                }
             },
             properties = { tags = { awful.screen.focused().tags[6] } }
         }
@@ -155,14 +164,21 @@ ruled.client.connect_signal(
 
         ruled.client.append_rule {
             id = 'dialogs',
-            rule_any = { type = {'dialog'}, class = {'Pavucontrol'} },
+            rule_any = {
+                type = {'dialog'},
+                class = {
+                    'Pavucontrol',
+                    'KeePassXC',
+                    'Blueman-manager'
+                }
+            },
             callback = function(c)
                 awful.placement.centered(c, nil)
             end,
             properties = {
-                buttons = {
-                    awful.button({ }, 2, function (c) c:kill() end)
-                }
+                buttons = gears.table.join(bindings.client_bindings, {
+                        awful.button({ }, 2, function (c) c:kill() end)
+                    })
             }
         }
         ruled.client.append_rule {
@@ -170,6 +186,8 @@ ruled.client.connect_signal(
             rule_any = { class = { 'Steam', 'evelauncher.exe' } },
             properties = { requested_border_width = 0 }
         }
+        local games = require('rules.games')
+        local work = require('rules.work')
         for _, rule in pairs(games) do
             ruled.client.append_rule(rule)
         end
@@ -286,18 +304,15 @@ awful.screen.connect_for_each_screen(
                             c.border_width = 0
                         end
                     else
-                        if c.border_width ~= c.requested_border_width then
-                            c.border_width = c.requested_border_width
+                        if c.requested_border_width ~= nil then
+                            if c.border_width ~= c.requested_border_width then
+                                c.border_width = c.requested_border_width
+                            end
                         end
                     end
                 end
             end
         )
-    end
-)
-
-client.connect_signal(
-    'property::floating', function(c)
     end
 )
 

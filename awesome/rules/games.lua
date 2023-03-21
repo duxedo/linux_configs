@@ -5,7 +5,7 @@ weakvals.__mode = 'v'
 return {
     {
         id = 'steam_games',
-        rule_any = { class = { 'steam_app.*', 'RPCS3' } },
+        rule_any = { class = { 'steam_app.*', 'RPCS3', 'hogwartslegacy.exe' } },
         -- properties = {
         --    _NET_WM_BYPASS_COMPOSITOR = 1
         -- }
@@ -37,7 +37,7 @@ return {
 
     {
         id = 'rpcs3',
-        rule_any = { class = { 'RPCS3' } },
+        rule_any = { class = { 'RPCS3', 'hogwartslegacy.exe' } },
         properties = { floating = true, titlebars_enabled = false }
     }
 }
