@@ -1,5 +1,6 @@
 local awful = require('awful')
 local json = require("json")
+local inspect = require("inspect")
 
 local function create(format_callback)
     local widget = format_callback(nil, nil)

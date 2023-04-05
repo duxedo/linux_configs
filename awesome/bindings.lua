@@ -97,7 +97,8 @@ tag = {
     { mod, "Escape" , function() awful.tag.history.restore(nil, 1) end   , "go back"},
 },
 screen = {
-    { modc,  {";'"}  , awful.screen.focus_relative                , "focus the next/previous screen"},
+    { mod,  {";'"}  , awful.screen.focus_relative                , "focus the next/previous screen"},
+    { mod,  "o"  , awful.client.movetoscreen                , "focus the next/previous screen"},
 },
 awesome = {
     { mod,  "s"      , function() hotkeys:show_help() end            , "show help"},
@@ -132,7 +133,7 @@ scrot = {
     { mod,  "Print", ut.screenshot(0)                                      , "flameshot"},
     { modm, "Print", ut.screenshot(3000)                                   , "flameshot with 3s delay"},
     { mods, "Print", ut.spawn("flameshot full --clipboard")                , "flameshot fullscreen to clipboard"},
-    { mod,  "o"    , ut.spawn("sh -c \"sleep 3; xprop > ~/xpr\"")          , "write xprop to ~/xpr in 3 seconds"},
+    --{ mod,  "o"    , ut.spawn("sh -c \"sleep 3; xprop > ~/xpr\"")          , "write xprop to ~/xpr in 3 seconds"},
 },
 tags = {
     { mod,   {"tags"}, ut.view_tag, "view tag" },

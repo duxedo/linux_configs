@@ -177,10 +177,9 @@ screen.connect_signal(
 
         local tag_base_layout = constants.notebook and {
             layout = wibox.layout.grid,
-            forced_num_rows = 6,
             forced_num_cols = 3,
             homogenous = true,
-            expand = true
+            horizontal_expand = true,
         }
         or
         {
@@ -243,7 +242,6 @@ screen.connect_signal(
                     forced_width = 30,
                     forced_height = 30
                 },
-                nil,
                 {
                     {
                         id = 'text_role',
@@ -257,6 +255,7 @@ screen.connect_signal(
                         return wibox.container.margin(widget, 5, 5)
                     end
                 },
+                nil,
             },
             id = 'background_role',
             widget = function(widget)
@@ -269,7 +268,7 @@ screen.connect_signal(
                 )
                 return widget
             end,
-            forced_height = 100
+            forced_height = 70
         }
         or
         {
@@ -327,23 +326,15 @@ screen.connect_signal(
             widget_template = widget_template
         }
 
-        local wibar_args = {
-                position = 'left',
-                height = s.geometry.height,
-                screen = s,
-                visible = true,
-                opacity = 0.7
-            }
-
-        if constants.notebook then
-            wibar_args.width = 57
-        else
-            wibar_args.width = theme.wibox_width
-        end
         -- Create the wibox
-        s.mywibox = awful.wibar(
-            wibar_args
-        )
+        s.mywibox = awful.wibar {
+            position = 'left',
+            height = s.geometry.height,
+            screen = s,
+            visible = true,
+            opacity = 0.7,
+            width = constants.notebook and 57 or theme.wibox_width
+        }
         local wibox_cfg = not constants.notebook and
         {
             layout = wibox.layout.align.vertical,
@@ -402,14 +393,20 @@ screen.connect_signal(
         or
         {
             layout = wibox.layout.align.vertical,
+            { -- Top widgets
              -- Top widgets
-            { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 90 },
+            { layout = wibox.layout.flex.horizontal, s.mytaglist },
+                layout = wibox.layout.fixed.vertical,
+                ram_widget{ timeout = 2 },
+                cpu_widget{ timeout = 2 },
+            },
             s.mytasklist, -- Middle widget
             { -- Bottom widgets
                 layout = wibox.layout.fixed.vertical,
                 {
                     {
                         layout = wibox.layout.fixed.vertical,
+                        constants.sensors_format and sensors(constants.sensors_format),
                         {
                             layout = wibox.layout.align.horizontal,
                             s.mylayoutbox,
