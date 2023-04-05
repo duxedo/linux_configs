@@ -10,7 +10,7 @@ local function create(format_callback)
         local result = json.decode(stdout)
         format_callback(widget, result)
     end
-    return awful.widget.watch("sensors -j", 1, cbk, widget)
+    return awful.widget.watch("sensors -j", 2, cbk, widget)
 end
 
 return create

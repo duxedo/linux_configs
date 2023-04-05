@@ -31,6 +31,10 @@ awful.key.keygroups[",."] = {
     {".", 1}
 }
 
+awful.key.keygroups[";'"] = {
+    {";", -1},
+    {"'", 1}
+}
 awful.key.keygroups["tags"] = {
     {"1", 1},
     {"q", 2},
@@ -70,7 +74,7 @@ client = {
     { mod  , "u"     , awful.client.urgent.jumpto               , "jump to urgent client"},
     { mod  , "Tab"   , ut.prev                                   , "go back"},
     { modc , "n"     , ut.restore_last_minimized                , "restore minimized"},
-    { mod  , {"-="}  , function (d) ut.inc_opacity(d * 0.1)() end, "increase/decrease opacity"},
+    { modc  , {"-="}  , function (d) ut.inc_opacity(d * 0.1)() end, "increase/decrease opacity"},
     { mods , "n"     , ut.restore_minimized_menu                , "restore minimized menu"},
     { mod  , "c"     , ut.jump_to_hidden_client                   , "jump to hidden client"},
 },
@@ -78,7 +82,7 @@ media = {
     {{}, "XF86AudioRaiseVolume"      , function() volume_widget:inc(5, true) end     , "increase volume"},
     {{}, "XF86AudioLowerVolume"      , function() volume_widget:dec(5, true) end     , "decrease volume"},
     {{}, "XF86AudioMute"             , function() volume_widget:toggle(true) end     , "mute"},
-    {{modkey}, "F10"                 , ut.toggle_autdo_profile                       , "toggle audio profile"},
+    {{modkey}, "F10"                 , ut.toggle_audio_profile                       , "toggle audio profile"},
 },
 brightness = constants.notebook and {
     {{}, "XF86MonBrightnessUp"       ,  function() brightness_widget:inc() end       , "increase brightness"},
@@ -93,12 +97,12 @@ tag = {
     { mod, "Escape" , function() awful.tag.history.restore(nil, 1) end   , "go back"},
 },
 screen = {
-    { modc,  {"jk"}  , awful.screen.focus_relative                , "focus the next/previous screen"},
+    { modc,  {";'"}  , awful.screen.focus_relative                , "focus the next/previous screen"},
 },
 awesome = {
     { mod,  "s"      , function() hotkeys:show_help() end            , "show help"},
     { mods, "b"      , ut.toggle_wibar                                  , "hide wibar"},
-    { mod,  "'"      , ut.lua_prompt                                 , "lua execute prompt"},
+    --{ mod,  "'"      , ut.lua_prompt                                 , "lua execute prompt"},
     { modc, "r"      , awesome.restart                               , "reload awesome"},
     { modc, "x"      , awesome.quit                                  , "quit awesome"},
 },
@@ -119,6 +123,7 @@ utility = {
 },
 layout = {
     { mod,   {"hl"}, function (d) awful.tag.incmwfact( d * 0.005) end      , "inc/dec master width factor"},
+    { mod,   "=", function () awful.tag.setmwfact( 0.5) end      , "equalize master/slave width"},
     { mods,  {"hl"}, function (d) awful.tag.incnmaster( d, nil, true) end  , "inc/dec # of master clients"},
     { modc,  {"hl"}, function (d) awful.tag.incncol( d, nil, true) end     , "inc/dec # of columns"},
     { mods,  {",."}, awful.layout.inc                                      , "previous/next"},
