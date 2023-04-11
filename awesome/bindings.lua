@@ -98,7 +98,7 @@ tag = {
 },
 screen = {
     { mod,  {";'"}  , awful.screen.focus_relative                , "focus the next/previous screen"},
-    { mod,  "o"  , awful.client.movetoscreen                , "focus the next/previous screen"},
+    { mod,  "o"  , awful.client.movetoscreen                , "move to next screen"},
 },
 awesome = {
     { mod,  "s"      , function() hotkeys:show_help() end            , "show help"},
