@@ -10,32 +10,43 @@ local modkey = const.modkey
 local bindings = {
 }
 
-awful.key.keygroups["jk"] = {
+local function keygroup(name)
+    return function(args)
+        awful.key.keygroups[name] = args
+    end
+end
+
+keygroup("jk") {
     {"j", -1},
     {"k", 1}
 }
-awful.key.keygroups["hl"] = {
+
+keygroup("hl") {
     {"h", -1},
     {"l", 1}
 }
-awful.key.keygroups["-="] = {
+
+keygroup("-=") {
     {"-", -1},
     {"=", 1}
 }
-awful.key.keygroups["[]"] = {
+
+keygroup("[]") {
     {"[", -1},
     {"]", 1}
 }
-awful.key.keygroups[",."] = {
+
+keygroup(",.") {
     {",", -1},
     {".", 1}
 }
 
-awful.key.keygroups[";'"] = {
+keygroup(";'") {
     {";", -1},
     {"'", 1}
 }
-awful.key.keygroups["tags"] = {
+
+keygroup("tags") {
     {"1", 1},
     {"q", 2},
     {"2", 3},
@@ -50,6 +61,11 @@ awful.key.keygroups["tags"] = {
     {"9", 12},
 }
 
+keygroup("volume") {
+    {"XF86AudioLowerVolume", -1},
+    {"XF86AudioRaiseVolume", 1}
+}
+
 local hotkeys = hotkeys_popup.new {
     font= "Fira Code Bold 12",
     description_font = "Fira Code 12",
@@ -61,28 +77,37 @@ vimkeys(hotkeys)
 
 local volume_widget = require('widgets.pactl-widget.volume')
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
--- {{{ Key bindings
+
+local function modvolume(value, notify)
+    return function (d)
+        if d >= 0 then
+            volume_widget:inc(d * value, notify)
+        else
+            volume_widget:dec(d * -value, notify)
+        end
+    end
+end
+
 local mod =  { modkey }
 local modc = { modkey, "Control" }
 local mods = { modkey, "Shift" }
 local modm = { modkey, "Mod1" }
 local modcs = { modkey, "Control", "Shift" }
-ut.register_global_bindings {
+bindings.global = {
 client = {
     { mods , {"jk"}  , awful.client.swap.byidx                  , "swap with next/previous client"},
     { mod  , {"jk"}  , ut.focus_by_idx                          , "focus next/previous by index"},
     { mod  , "u"     , awful.client.urgent.jumpto               , "jump to urgent client"},
-    { mod  , "Tab"   , ut.prev                                   , "go back"},
+    { mod  , "Tab"   , function() ut.focus_by_idx(1) end        , "cycle focus"},
     { modc , "n"     , ut.restore_last_minimized                , "restore minimized"},
     { modc  , {"-="}  , function (d) ut.inc_opacity(d * 0.1)() end, "increase/decrease opacity"},
     { mods , "n"     , ut.restore_minimized_menu                , "restore minimized menu"},
     { mod  , "c"     , ut.jump_to_hidden_client                   , "jump to hidden client"},
 },
 media = {
-    {{}, "XF86AudioRaiseVolume"      , function() volume_widget:inc(5, true) end     , "increase volume"},
-    {{}, "XF86AudioLowerVolume"      , function() volume_widget:dec(5, true) end     , "decrease volume"},
-    {{}, "XF86AudioMute"             , function() volume_widget:toggle(true) end     , "mute"},
-    {{modkey}, "F10"                 , ut.toggle_audio_profile                       , "toggle audio profile"},
+    {{}, {"volume"}      ,  modvolume(5, true)    , "inc/dec volume"},
+    {{}, "XF86AudioMute" , function() volume_widget:toggle(true) end     , "mute"},
+    {{modkey}, "F10"     , ut.toggle_audio_profile                       , "toggle audio profile"},
 },
 brightness = constants.notebook and {
     {{}, "XF86MonBrightnessUp"       ,  function() brightness_widget:inc() end       , "increase brightness"},
@@ -144,6 +169,8 @@ tags = {
 }
 }
 
+ut.register_global_bindings(bindings.global)
+
 client.connect_signal("request::default_keybindings", function(context)
     ut.register_client_bindings{
         client = {
@@ -154,9 +181,9 @@ client.connect_signal("request::default_keybindings", function(context)
             { mod , "t",      function (c) c.ontop = not c.ontop            end, "toggle keep on top"},
             { mods, "t",
             function (c)
-                c.ontop = not c.ontop
-                c.sticky = c.ontop
-            end, "toggle keep on top"},
+                c.sticky = not c.sticky
+                c.ontop = c.sticky
+            end, "toggle sticky"},
             { mod , "n", function (c) c.minimized = true end , "minimize"},
             { mod , {"[]"}, function (d, c) awful.client.incwfact(0.05 * d, c) end , "dec/inc size factor"},
             { mod , "m", ut.maximize(), "(un)maximize"},
@@ -168,21 +195,6 @@ client.connect_signal("request::default_keybindings", function(context)
         }
     }
 end)
-
---awful.keyboard.append_global_keybindings({
-    --awful.key {
-    --    modifiers   =  mod,
-    --    keygroup    = "numpad",
-    --    description = "select layout directly",
-    --    group       = "layout",
-    --    on_press    = function (index)
-    --        local t = awful.screen.focused().selected_tag
-    --        if t then
-    --            t.layout = t.layouts[index] or t.layout
-    --        end
-    --    end,
-    --}
---})
 
 bindings.client_bindings = {
     awful.button({ }, 1, function (c)
@@ -199,24 +211,4 @@ client.connect_signal("request::default_mousebindings", function()
     awful.mouse.append_client_mousebindings (bindings.client_bindings)
 end)
 
---local function stop(cbk)
---    return
---    function(grabber)
---        cbk()
---        grabber:stop()
---    end
---end
---
---awful.keygrabber {
---    keybindings = {
---        awful.key({}, "c", stop(ut.spawn("calc")))
---    },
---    stop_event         = 'release',
---    root_keybindings = {
---        { mod, 'z', function(self)
---            print('Is now active!', self)
---        end},
---    },
---    keypressed_callback = function(self, mod, key, event) debug_message("" .. key) end
---}
 return bindings
