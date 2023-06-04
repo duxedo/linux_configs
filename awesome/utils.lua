@@ -27,10 +27,10 @@ function utils.prevfocus()
 end
 
 function utils.restore_last_minimized()
-    c = awful.client.restore()
+    local c = awful.client.restore()
     -- Focus restored client
     if c then
-        client.focus = c
+        c:activate { context = "restore" }
         c:raise()
     end
 end

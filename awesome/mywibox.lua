@@ -315,7 +315,8 @@ screen.connect_signal(
                 layout = wibox.layout.fixed.vertical
             },
             style = {
-                shape_border_width = 1,
+
+                spacing = 5, 
                 shape_border_color = '#4A4A4A',
                 shape = function(cr, width, height)
                     gears.shape.partially_rounded_rect(
@@ -323,6 +324,8 @@ screen.connect_signal(
                     )
                 end
             },
+            bg = '#FF0000',
+
             widget_template = widget_template
         }
 
@@ -333,6 +336,8 @@ screen.connect_signal(
             screen = s,
             visible = true,
             opacity = 0.7,
+            --bg = '#00000055',
+            --bgimage = '/home/reinhardt/Documents/transp.png',
             width = constants.notebook and 57 or theme.wibox_width
         }
         local wibox_cfg = not constants.notebook and
@@ -350,7 +355,7 @@ screen.connect_signal(
                 {
                     {
                         layout = wibox.layout.fixed.vertical,
-                        wibox.widget.textbox("memo:\nuse fd"),
+                        awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
                         constants.sensors_format and sensors(constants.sensors_format),
                         {
                             layout = wibox.layout.align.horizontal,

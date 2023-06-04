@@ -186,6 +186,11 @@ ruled.client.connect_signal(
             rule_any = { class = { 'Steam', 'evelauncher.exe' } },
             properties = { requested_border_width = 0 }
         }
+        ruled.client.append_rule {
+            id = 'zoom-popup',
+            rule = { class = 'zoom', name = 'zoom' },
+            properties = { focus = function() return nil end }
+        }
         local games = require('rules.games')
         local work = require('rules.work')
         for _, rule in pairs(games) do

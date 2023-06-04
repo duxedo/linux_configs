@@ -178,7 +178,7 @@ local function worker(user_args)
             widget:unmute()
         end
         if do_notify == true then
-            spawn.easy_async("dunstify -a volume \" \" -i " .. icon .. " -u low -h int:value:".. tostring(vol or 0) .." -h string:synchronous:volume -h string:x-dunst-stack-tag:vol -t 700", function () end)
+            spawn.easy_async("dunstify --appname=\" \" \" \" -i " .. icon .. " -u low -h int:value:".. tostring(vol or 0) .." -h string:synchronous:volume -h string:x-dunst-stack-tag:vol -t 700", function () end)
         end
     end
 
