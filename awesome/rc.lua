@@ -119,9 +119,11 @@ client.connect_signal(
         end
     end
 )
-
+if not os.getenv("AWESOME_DEBUG") then
 awful.spawn.with_shell(
     'if (xrdb -query | grep -q "^awesome\\.started:\\s*true$"); then exit; fi;' ..
         'xrdb -merge <<< "awesome.started:true";' .. '~/.config/awesome/autorun.sh;'
 )
+
+end
 
