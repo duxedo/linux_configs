@@ -114,8 +114,14 @@ brightness = constants.notebook and {
     {{}, "XF86MonBrightnessDown"     ,  function() brightness_widget:dec() end       , "decrease brightness"},
 } or nil,
 notifications = {
-    { mod,  "v"     , ut.spawn("dunstctl close-all")        , "close all"},
-    { modc, "v"     , ut.spawn("dunstctl history-pop")      , "hitory"},
+    { modc,  "v"     , ut.spawn("dunstctl close-all")        , "close all"},
+    { mod, "v"     , function ()
+        ut.spawn("dunstctl history-pop")()
+        ut.spawn("dunstctl history-pop")()
+        ut.spawn("dunstctl history-pop")()
+        ut.spawn("dunstctl history-pop")()
+        ut.spawn("dunstctl history-pop")()
+    end     , "hitory"},
     { mods, "v"     , ut.spawn("dunstctl context")          , "context menu"},
 },
 tag = {
@@ -190,8 +196,8 @@ client.connect_signal("request::default_keybindings", function(context)
             { modc,  "m", ut.maximize(ut.vert), "(un)maximize vertically"},
             { mods,  "m", ut.maximize(ut.hor), "(un)maximize horizontally"},
             { modc,  "d", ut.dumpclient, "dump client properties"},
-            { mod, {"arrows"}, ut.resize, "resize client"},
-            { mods,  {"arrows"}, ut.move, "move client"},
+            { mods, {"arrows"}, ut.resize, "resize client"},
+            { mod,  {"arrows"}, ut.move, "move client"},
         }
     }
 end)
