@@ -33,7 +33,7 @@ ruled.client.connect_signal(
                 class = {
                     'Arandr',
                     'Sxiv',
-                    'Steam',
+                    'steam',
                     'Spotify',
                     'Shutter',
                     'KeePassXC',
@@ -96,7 +96,7 @@ ruled.client.connect_signal(
         ruled.client.append_rule {
             id = 'game-launchers',
             rule_any = {
-                class = { 'Steam', 'Lutris', 'battle.net.exe', 'Origin', 'gamescope' }
+                class = { 'steam', 'Lutris', 'battle.net.exe', 'Origin', 'gamescope' }
             },
             properties = { tags = { awful.screen.focused().tags[2] } }
         }
@@ -183,7 +183,7 @@ ruled.client.connect_signal(
         }
         ruled.client.append_rule {
             id = 'noborder',
-            rule_any = { class = { 'Steam', 'evelauncher.exe' } },
+            rule_any = { class = { 'steam', 'evelauncher.exe' } },
             properties = { requested_border_width = 0 }
         }
         ruled.client.append_rule {
