@@ -36,28 +36,28 @@ local function client_menu_toggle_fn()
 end
 -- Create a wibox for each screen and add it
 local taglist_buttons =
-gears.table.join(
-    awful.button( {}, 1, function(t) t:view_only() end),
-    awful.button( { modkey }, 1,
-        function(t)
-            if client.focus then
-                client.focus:move_to_tag(t)
-            end
-        end),
-    awful.button({}, 3, awful.tag.viewtoggle),
-    awful.button( { modkey }, 3,
-        function(t)
-            if client.focus then
-                client.focus:toggle_tag(t)
-            end
-        end),
-    awful.button( {}, 4, function(t) awful.tag.viewnext(t.screen) end),
-    awful.button( {}, 5, function(t) awful.tag.viewprev(t.screen) end)
-)
+    gears.table.join(
+        awful.button({}, 1, function(t) t:view_only() end),
+        awful.button({ modkey }, 1,
+            function(t)
+                if client.focus then
+                    client.focus:move_to_tag(t)
+                end
+            end),
+        awful.button({}, 3, awful.tag.viewtoggle),
+        awful.button({ modkey }, 3,
+            function(t)
+                if client.focus then
+                    client.focus:toggle_tag(t)
+                end
+            end),
+        awful.button({}, 4, function(t) awful.tag.viewnext(t.screen) end),
+        awful.button({}, 5, function(t) awful.tag.viewprev(t.screen) end)
+    )
 
 local tasklist_buttons =
     gears.table.join(
-        awful.button( {}, 1,
+        awful.button({}, 1,
             function(c)
                 if c == client.focus then
                     c.minimized = true
@@ -74,11 +74,11 @@ local tasklist_buttons =
                     c:raise()
                 end
             end),
-        awful.button( {}, 2, function(c) c:kill() end),
+        awful.button({}, 2, function(c) c:kill() end),
         awful.button({}, 3, client_menu_toggle_fn()),
-        awful.button( {}, 4, function() awful.tag.viewnext() end),
-        awful.button( {}, 5, function() awful.tag.viewprev() end)
-     )
+        awful.button({}, 4, function() awful.tag.viewnext() end),
+        awful.button({}, 5, function() awful.tag.viewprev() end)
+    )
 local textclock = nil
 if not constants.notebook then
     textclock = wibox.widget.textclock('%a %d.%m, %H:%M')
@@ -89,12 +89,12 @@ textclock.forced_width = theme.wibox_width
 textclock.halign = 'center'
 
 local month_calendar = awful.widget.calendar_popup.month(
-                           {
+    {
         style_header = { border_width = 0 },
         style_weekday = { border_width = 0 },
         style_normal = { border_width = 0 }
     }
-                       )
+)
 
 local langbox_timer = gears.timer { timeout = 0.5 }
 
@@ -118,11 +118,10 @@ month_calendar:attach(textclock, 'bl')
 
 screen.connect_signal(
     'request::desktop_decoration', function(s)
-
         -- Each screen has its own tag table.
         -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
         local addtag = awful.tag.add
-        local default = function ()
+        local default = function()
             return
             {
                 layout = awful.layout.suit.tile,
@@ -176,19 +175,19 @@ screen.connect_signal(
         )
 
         local tag_base_layout = constants.notebook and {
-            layout = wibox.layout.grid,
-            forced_num_cols = 3,
-            homogenous = true,
-            horizontal_expand = true,
-        }
-        or
-        {
-            layout = wibox.layout.grid,
-            forced_num_rows = 2,
-            forced_num_cols = 6,
-            homogenous = true,
-            expand = true
-        }
+                layout = wibox.layout.grid,
+                forced_num_cols = 3,
+                homogenous = true,
+                horizontal_expand = true,
+            }
+            or
+            {
+                layout = wibox.layout.grid,
+                forced_num_rows = 2,
+                forced_num_cols = 6,
+                homogenous = true,
+                expand = true
+            }
         -- Create a taglist widget
         s.mytaglist = awful.widget.taglist {
             screen = s,
@@ -204,7 +203,7 @@ screen.connect_signal(
                 id = 'background_role',
                 widget = wibox.container.background,
                 -- Add support for hover colors and an index label
-                create_callback = function(self, c3, _ , _) --index, tags)
+                create_callback = function(self, c3, _, _)  --index, tags)
                     self.label = self.label or self:get_children_by_id('label_role')[1]
                     self.label.markup = '<b>' .. c3.name .. '</b>'
                     self:connect_signal(
@@ -232,80 +231,80 @@ screen.connect_signal(
 
         local tooltip = awful.tooltip {}
         local widget_template = constants.notebook and
-        {
-            {
-                layout = wibox.layout.align.vertical,
-                {
-                    awful.widget.clienticon,
-                    margins = 3,
-                    widget = wibox.container.margin,
-                    forced_width = 30,
-                    forced_height = 30
-                },
-                {
-                    {
-                        id = 'text_role',
-                        wrap = 'char',
-                        visible = true,
-                        ellipsize = false,
-                        font      = "Sans 3",
-                        widget = wibox.widget.textbox,
-                    },
-                    widget = function(widget)
-                        return wibox.container.margin(widget, 5, 5)
-                    end
-                },
-                nil,
-            },
-            id = 'background_role',
-            widget = function(widget)
-                widget = wibox.container.background(widget)
-                widget:connect_signal(
-                    'mouse::enter', function(self)
-                        tooltip:add_to_object(widget)
-                        tooltip.text = self:get_children_by_id('text_role')[1].text
-                    end
-                )
-                return widget
-            end,
-            forced_height = 70
-        }
-        or
-        {
             {
                 {
-                    layout = wibox.layout.align.horizontal,
-                    nil,
-                    nil,
+                    layout = wibox.layout.align.vertical,
                     {
                         awful.widget.clienticon,
-                        margins = 5,
+                        margins = 3,
                         widget = wibox.container.margin,
                         forced_width = 30,
                         forced_height = 30
-                    }
+                    },
+                    {
+                        {
+                            id        = 'text_role',
+                            wrap      = 'char',
+                            visible   = true,
+                            ellipsize = false,
+                            font      = "Sans 3",
+                            widget    = wibox.widget.textbox,
+                        },
+                        widget = function(widget)
+                            return wibox.container.margin(widget, 5, 5)
+                        end
+                    },
+                    nil,
                 },
+                id = 'background_role',
+                widget = function(widget)
+                    widget = wibox.container.background(widget)
+                    widget:connect_signal(
+                        'mouse::enter', function(self)
+                            tooltip:add_to_object(widget)
+                            tooltip.text = self:get_children_by_id('text_role')[1].text
+                        end
+                    )
+                    return widget
+                end,
+                forced_height = 70
+            }
+            or
+            {
                 {
-                    { id = 'text_role', widget = wibox.widget.textbox, wrap = 'char' },
-                    widget = function(widget)
-                        return wibox.container.margin(widget, 5, 5)
-                    end
+                    {
+                        layout = wibox.layout.align.horizontal,
+                        nil,
+                        nil,
+                        {
+                            awful.widget.clienticon,
+                            margins = 5,
+                            widget = wibox.container.margin,
+                            forced_width = 30,
+                            forced_height = 30
+                        }
+                    },
+                    {
+                        { id = 'text_role', widget = wibox.widget.textbox, wrap = 'char' },
+                        widget = function(widget)
+                            return wibox.container.margin(widget, 5, 5)
+                        end
+                    },
+                    layout = wibox.layout.fixed.vertical
                 },
-                layout = wibox.layout.fixed.vertical
-            },
-            id = 'background_role',
-            widget = function(widget)
-                widget = wibox.container.background(widget)
-                widget:connect_signal(
-                    'mouse::enter', function(self)
-                        tooltip:add_to_object(widget)
-                        tooltip.text = self:get_children_by_id('text_role')[1].text
-                    end
-                )
-                return widget
-            end,
-            forced_height = 90
-        }
+                id = 'background_role',
+                widget = function(widget)
+                    widget = wibox.container.background(widget)
+                    widget:connect_signal(
+                        'mouse::enter', function(self)
+                            tooltip:add_to_object(widget)
+                            tooltip.text = self:get_children_by_id('text_role')[1].text
+                        end
+                    )
+                    return widget
+                end,
+                forced_height = 90
+            }
         -- Create a tasklist widget
         s.mytasklist = awful.widget.tasklist {
             screen = s,
@@ -315,8 +314,7 @@ screen.connect_signal(
                 layout = wibox.layout.fixed.vertical
             },
             style = {
-
-                spacing = 5, 
+                spacing = 5,
                 shape_border_color = '#4A4A4A',
                 shape = function(cr, width, height)
                     gears.shape.partially_rounded_rect(
@@ -341,128 +339,128 @@ screen.connect_signal(
             width = constants.notebook and 57 or theme.wibox_width
         }
         local wibox_cfg = not constants.notebook and
-        {
-            layout = wibox.layout.align.vertical,
-            { -- Top widgets
-                layout = wibox.layout.fixed.vertical,
-                { layout = wibox.layout.flex.horizontal, s.mytaglist, forced_height = 40 },
-                cpu_widget{ timeout = 2 },
-                ram_widget{ timeout = 2 },
-            },
-            s.mytasklist, -- Middle widget
-            { -- Bottom widgets
-                layout = wibox.layout.fixed.vertical,
-                {
+            {
+                layout = wibox.layout.align.vertical,
+                { -- Top widgets
+                    layout = wibox.layout.fixed.vertical,
+                    { layout = wibox.layout.flex.horizontal, s.mytaglist,               forced_height = 40 },
+                    { layout = wibox.layout.flex.horizontal, cpu_widget { timeout = 2 }, forced_height = 40 },
+                    ram_widget { timeout = 2 },
+                },
+                s.mytasklist, -- Middle widget
+                {         -- Bottom widgets
+                    layout = wibox.layout.fixed.vertical,
                     {
-                        layout = wibox.layout.fixed.vertical,
-                        awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
-                        constants.sensors_format and sensors(constants.sensors_format),
                         {
-                            layout = wibox.layout.align.horizontal,
-                            s.mylayoutbox,
+                            layout = wibox.layout.fixed.vertical,
+                            awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
+                            constants.sensors_format and sensors(constants.sensors_format),
+                            {
+                                layout = wibox.layout.align.horizontal,
+                                s.mylayoutbox,
+                                weather_widget(
+                                    {
+                                        api_key = constants.weather_api_key,
+                                        coordinates = { 60.004, 30.324 },
+                                        show_hourly_forecast = true,
+                                        show_daily_forecast = true,
+                                        timeout = 600
+                                    }
+                                ),
+                                mykeyboardlayout,
+                                forced_height = 22
+                            },
+                            { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
+                        },
+                        widget = wibox.container.margin,
+                        left = 2,
+                        right = 2
+                    },
+                    {
+                        {
+                            layout = wibox.layout.fixed.horizontal,
+                            volume_widget {
+                                --device = "pipewire",
+                                widget_type = "horizontal_bar",
+                                mixer_cmd = 'pavucontrol -t 5'
+                            },
+                            forced_height = 25,
+                        },
+                        widget = wibox.container.margin,
+                        left = 4,
+                        right = 4
+                    },
+                    { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock, }
+                }
+            }
+            or
+            {
+                layout = wibox.layout.align.vertical,
+                { -- Top widgets
+                    -- Top widgets
+                    { layout = wibox.layout.flex.horizontal, s.mytaglist },
+                    layout = wibox.layout.fixed.vertical,
+                    ram_widget { timeout = 2 },
+                    cpu_widget { timeout = 2 },
+                },
+                s.mytasklist, -- Middle widget
+                {         -- Bottom widgets
+                    layout = wibox.layout.fixed.vertical,
+                    {
+                        {
+                            layout = wibox.layout.fixed.vertical,
+                            constants.sensors_format and sensors(constants.sensors_format),
+                            {
+                                layout = wibox.layout.align.horizontal,
+                                s.mylayoutbox,
+                                mykeyboardlayout,
+                                forced_height = 25
+                            },
+                            {
+                                layout = wibox.layout.align.horizontal,
+                                battery_widget(),
+                                brightness_widget(),
+                                forced_height = 25
+                            },
                             weather_widget(
                                 {
                                     api_key = constants.weather_api_key,
                                     coordinates = { 60.004, 30.324 },
                                     show_hourly_forecast = true,
-                                    show_daily_forecast = true,
-                                    timeout = 600
+                                    show_daily_forecast = true
                                 }
                             ),
-                            mykeyboardlayout,
-                            forced_height = 22
-                        },
-                        { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
-                    },
-                    widget = wibox.container.margin,
-                    left = 2,
-                    right = 2
-                },
-                {
-                    {
-                        layout = wibox.layout.fixed.horizontal,
-                        volume_widget{
-                            --device = "pipewire",
-                            widget_type = "horizontal_bar",
-                            mixer_cmd = 'pavucontrol -t 5'
-                        },
-                        forced_height = 25,
-                    },
-                    widget = wibox.container.margin,
-                    left = 4,
-                    right = 4
-                },
-                { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock,  }
-            }
-        }
-        or
-        {
-            layout = wibox.layout.align.vertical,
-            { -- Top widgets
-             -- Top widgets
-            { layout = wibox.layout.flex.horizontal, s.mytaglist },
-                layout = wibox.layout.fixed.vertical,
-                ram_widget{ timeout = 2 },
-                cpu_widget{ timeout = 2 },
-            },
-            s.mytasklist, -- Middle widget
-            { -- Bottom widgets
-                layout = wibox.layout.fixed.vertical,
-                {
-                    {
-                        layout = wibox.layout.fixed.vertical,
-                        constants.sensors_format and sensors(constants.sensors_format),
-                        {
-                            layout = wibox.layout.align.horizontal,
-                            s.mylayoutbox,
-                            mykeyboardlayout,
-                            forced_height = 25
-                        },
-                        {
-                            layout = wibox.layout.align.horizontal,
-                            battery_widget(),
-                            brightness_widget(),
-                            forced_height = 25
-                        },
-                        weather_widget(
                             {
-                                api_key = constants.weather_api_key,
-                                coordinates = { 60.004, 30.324 },
-                                show_hourly_forecast = true,
-                                show_daily_forecast = true
+                                widget = wibox.widget.systray,
+                                horizontal = false,
+                                base_size = 24
                             }
-                        ),
-                        {
-                            widget = wibox.widget.systray,
-                            horizontal = false,
-                            base_size = 24
-                        }
-                    },
-                    widget = wibox.container.margin,
-                    left = 2,
-                    right = 2
-                },
-                {
-                    {
-                        layout = wibox.layout.fixed.horizontal,
-                        volume_widget{
-                            --device = "pipewire",
-                            widget_type = "horizontal_bar",
-                            mixer_cmd = 'pavucontrol -t 5'
                         },
-                        forced_height = 25,
+                        widget = wibox.container.margin,
+                        left = 2,
+                        right = 2
                     },
-                    widget = wibox.container.margin,
-                    left = 4,
-                    right = 4
-                },
-                { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
+                    {
+                        {
+                            layout = wibox.layout.fixed.horizontal,
+                            volume_widget {
+                                --device = "pipewire",
+                                widget_type = "horizontal_bar",
+                                mixer_cmd = 'pavucontrol -t 5'
+                            },
+                            forced_height = 25,
+                        },
+                        widget = wibox.container.margin,
+                        left = 4,
+                        right = 4
+                    },
+                    { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
+                }
             }
-        }
         -- Add widgets to the wibox
         s.mywibox:setup(wibox_cfg)
 
-        s.langbox = wibox (
+        s.langbox = wibox(
             {
                 position = 'top',
                 x = 40,
@@ -476,7 +474,7 @@ screen.connect_signal(
                 type = 'menu'
             }
         )
-        s.langbox:setup{ layout = wibox.layout.align.horizontal, mykeyboardlayout }
+        s.langbox:setup { layout = wibox.layout.align.horizontal, mykeyboardlayout }
     end
 )
 
