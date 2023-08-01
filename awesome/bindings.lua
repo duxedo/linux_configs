@@ -4,6 +4,7 @@ local vimkeys = require("hotkeys.nvim")
 local const = require("constants")
 local ut = require("utils")
 local constants = require("constants")
+local sensors = require("widgets.sensors")
 
 local modkey = const.modkey
 
@@ -151,7 +152,8 @@ launcher = {
     { mods, "d"      , ut.rofi({show = "drun"}, {floating = true}), "run desktop apps floating"},
 },
 utility = {
-    {{ modkey, "Mod1"    }, "s"     , ut.spawn("sync")                                      , "call fsync"},
+    { modm, "s"     , ut.spawn("sync")                                      , "call fsync"},
+    { mod, "y"     , function () sensors.detailed = not sensors.detailed end         , "toggle sensors detailed output"},
 },
 layout = {
     { mod,   {"hl"}, function (d) awful.tag.incmwfact( d * 0.005) end      , "inc/dec master width factor"},
