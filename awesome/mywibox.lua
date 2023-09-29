@@ -243,15 +243,19 @@ screen.connect_signal(
                     },
                     {
                         {
-                            id        = 'text_role',
-                            wrap      = 'char',
-                            visible   = true,
-                            ellipsize = false,
-                            font      = "Sans 3",
-                            widget    = wibox.widget.textbox,
+                            {
+                                id        = 'text_role',
+                                wrap      = 'char',
+                                visible   = true,
+                                ellipsize = false,
+                                font      = "Sans 3",
+                                widget    = wibox.widget.textbox,
+                            },
+                            direction = "east",
+                            widget = wibox.container.rotate
                         },
                         widget = function(widget)
-                            return wibox.container.margin(widget, 5, 5)
+                            return wibox.container.margin(widget, 3, 3, 3, 5)
                         end
                     },
                     nil,
@@ -267,7 +271,7 @@ screen.connect_signal(
                     )
                     return widget
                 end,
-                forced_height = 70
+                forced_height = 200
             }
             or
             {
