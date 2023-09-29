@@ -5,8 +5,8 @@ local const = require("constants")
 local ut = require("utils")
 local constants = require("constants")
 local sensors = require("widgets.sensors")
-
-local modkey = const.modkey
+local awedebug = os.getenv("awesome_debug")
+local modkey = (not awedebug) and const.modkey or 'Mod1'
 
 local bindings = {
 }
