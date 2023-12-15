@@ -157,15 +157,6 @@ ruled.client.connect_signal(
         }
 
         ruled.client.append_rule {
-            id = 'devterm', --external terminal (alacritty) spawned from nvim-dap
-            rule_any = { class = { 'devterm' } },
-            callback = function(c)
-                c.floating = true
-                awful.placement.top_right(c)
-            end
-        }
-
-        ruled.client.append_rule {
             -- @DOC_CSD_TITLEBARS@
             id = 'titlebars',
             rule_any = { type = { 'normal', 'dialog' } },
