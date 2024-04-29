@@ -26,6 +26,7 @@ run telegram-desktop
 run squadus
 run nm-applet
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
+run xscreensaver --no-splash
 #run discord
 run kdeconnect-indicator
 run picom -b
