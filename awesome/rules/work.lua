@@ -16,7 +16,7 @@ return {
         callback = function(c)
             c.floating = true
             c.ontop = true
-            c.opacity = 0.7
+            --c.opacity = 0.7
             awful.placement.top_right(c)
         end
 
