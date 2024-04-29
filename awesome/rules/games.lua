@@ -21,9 +21,12 @@ return {
                 callback = function()
                     print('new game')
                     if clientref.cl ~= nil then
-                        local cli = clientref.cl
+                        local client = clientref.cl
+                        if client == nil then
+                            return
+                        end
                         awful.spawn.easy_async(
-                            'xprop -id ' .. cli.window ..
+                            'xprop -id ' .. client.window ..
                                 ' -f _NET_WM_BYPASS_COMPOSITOR 32c -set _NET_WM_BYPASS_COMPOSITOR 1',
                             function()
                             end
