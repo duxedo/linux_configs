@@ -1,7 +1,5 @@
 local awful = require('awful')
 local gears = require('gears')
-local weakvals = {}
-weakvals.__mode = 'v'
 return {
     {
         id = 'steam_games',
@@ -11,6 +9,9 @@ return {
         -- }
         properties = { requested_border_width = 0 },
         callback = function(c)
+            if c.class == "steam_app_8500" then -- eve online
+                return
+            end
             local clientref = setmetatable({ cl = c }, { __mode = 'kv' })
             c.border_width = 0
             print('new game' .. c.name)
