@@ -46,7 +46,8 @@ ruled.client.connect_signal(
                     'zoom',
                     'RPCS3',
                     'Pavucontrol',
-                    'Blueman-manager'
+                    'Blueman-manager',
+                    'zenity'
                 },
                 -- Note that the name property shown in xprop might be set slightly after creation of the client
                 -- and the name shown there might not match defined rules here.
@@ -170,7 +171,8 @@ ruled.client.connect_signal(
                 class = {
                     'Pavucontrol',
                     'KeePassXC',
-                    'Blueman-manager'
+                    'Blueman-manager',
+                    'zenity'
                 }
             },
             callback = function(c)
