@@ -9,7 +9,7 @@
 	url = https://github.com/lcpz/lain.git
 [submodule "awesome/awesome-wm-widgets"]
 	path = awesome/awesome-wm-widgets
-	url = https://github.com/streetturtle/awesome-wm-widgets
+	url = git@github.com:duxedo/awesome-wm-widgets.git
 [submodule "nvim_config"]
 	path = nvim_config
 	url = git@github.com:duxedo/nvim_config.git
