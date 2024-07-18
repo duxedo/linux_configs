@@ -452,7 +452,7 @@ local function setup_screen(s)
                                 widget_type = "horizontal_bar",
                                 mixer_cmd = 'pavucontrol -t 5'
                             },
-                            forced_height = 25,
+                            forced_height = 30,
                         },
                         widget = wibox.container.margin,
                         left = 4,
