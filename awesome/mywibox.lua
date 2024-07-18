@@ -153,6 +153,63 @@ local function setup_tags(screen)
     addtag('9', default())
 end
 
+local function create_taglist(screen)
+    local tag_base_layout = constants.notebook and {
+            layout = wibox.layout.grid,
+            forced_num_cols = 3,
+            homogenous = true,
+            horizontal_expand = true,
+        }
+        or
+        {
+            layout = wibox.layout.grid,
+            forced_num_rows = 2,
+            forced_num_cols = 6,
+            homogenous = true,
+            expand = true
+        }
+    -- Create a taglist widget
+    return awful.widget.taglist {
+        screen = screen,
+        filter = awful.widget.taglist.filter.all,
+        buttons = taglist_buttons,
+        base_layout = tag_base_layout,
+        widget_template = {
+            {
+                { id = 'label_role', widget = wibox.widget.textbox },
+                margins = { left = 4, right = 4, top = 2, bottom = 3 },
+                widget = wibox.container.margin
+            },
+            id = 'background_role',
+            widget = wibox.container.background,
+            -- Add support for hover colors and an index label
+            create_callback = function(self, c3, _, _) --index, tags)
+                self.label = self.label or self:get_children_by_id('label_role')[1]
+                self.label.markup = '<b>' .. c3.name .. '</b>'
+                self:connect_signal(
+                    'mouse::enter', function()
+                        if self.bg ~= '#ee0000' then
+                            self.backup = self.bg
+                            self.has_backup = true
+                        end
+                        self.bg = '#ee0000'
+                    end
+                )
+                self:connect_signal(
+                    'mouse::leave', function()
+                        if self.has_backup then
+                            self.bg = self.backup
+                        end
+                    end
+                )
+            end,
+            update_callback = function(self, c3, _, _) --index, tags)
+                self.label.markup = '<b>' .. c3.name .. '</b>'
+            end
+        }
+    }
+end
+
 local function setup_screen(s)
     setup_tags(s)
     -- Each screen has its own tag table.
@@ -176,60 +233,7 @@ local function setup_screen(s)
         )
     )
 
-    local tag_base_layout = constants.notebook and {
-            layout = wibox.layout.grid,
-            forced_num_cols = 3,
-            homogenous = true,
-            horizontal_expand = true,
-        }
-        or
-        {
-            layout = wibox.layout.grid,
-            forced_num_rows = 2,
-            forced_num_cols = 6,
-            homogenous = true,
-            expand = true
-        }
-    -- Create a taglist widget
-    s.mytaglist = awful.widget.taglist {
-        screen = s,
-        filter = awful.widget.taglist.filter.all,
-        buttons = taglist_buttons,
-        base_layout = tag_base_layout,
-        widget_template = {
-            {
-                { id = 'label_role', widget = wibox.widget.textbox },
-                margins = { left = 4, right = 4, top = 2, bottom = 3 },
-                widget = wibox.container.margin
-            },
-            id = 'background_role',
-            widget = wibox.container.background,
-            -- Add support for hover colors and an index label
-            create_callback = function(self, c3, _, _)     --index, tags)
-                self.label = self.label or self:get_children_by_id('label_role')[1]
-                self.label.markup = '<b>' .. c3.name .. '</b>'
-                self:connect_signal(
-                    'mouse::enter', function()
-                        if self.bg ~= '#ee0000' then
-                            self.backup = self.bg
-                            self.has_backup = true
-                        end
-                        self.bg = '#ee0000'
-                    end
-                )
-                self:connect_signal(
-                    'mouse::leave', function()
-                        if self.has_backup then
-                            self.bg = self.backup
-                        end
-                    end
-                )
-            end,
-            update_callback = function(self, c3, _, _)     --index, tags)
-                self.label.markup = '<b>' .. c3.name .. '</b>'
-            end
-        }
-    }
+    s.mytaglist = create_taglist(s)
 
     local tooltip = awful.tooltip {}
     local widget_template = constants.notebook and
@@ -347,14 +351,14 @@ local function setup_screen(s)
     local wibox_cfg = not constants.notebook and
         {
             layout = wibox.layout.align.vertical,
-            {     -- Top widgets
+            { -- Top widgets
                 layout = wibox.layout.fixed.vertical,
                 { layout = wibox.layout.flex.horizontal, s.mytaglist,                forced_height = 40 },
                 { layout = wibox.layout.flex.horizontal, cpu_widget { timeout = 2 }, forced_height = 40 },
                 ram_widget { timeout = 2 },
             },
-            s.mytasklist,     -- Middle widget
-            {                 -- Bottom widgets
+            s.mytasklist, -- Middle widget
+            {             -- Bottom widgets
                 layout = wibox.layout.fixed.vertical,
                 {
                     {
@@ -405,15 +409,15 @@ local function setup_screen(s)
         or
         {
             layout = wibox.layout.align.vertical,
-            {     -- Top widgets
+            { -- Top widgets
                 -- Top widgets
                 { layout = wibox.layout.flex.horizontal, s.mytaglist },
                 layout = wibox.layout.fixed.vertical,
                 ram_widget { timeout = 2 },
                 cpu_widget { timeout = 2 },
             },
-            s.mytasklist,     -- Middle widget
-            {                 -- Bottom widgets
+            s.mytasklist, -- Middle widget
+            {             -- Bottom widgets
                 layout = wibox.layout.fixed.vertical,
                 {
                     {
