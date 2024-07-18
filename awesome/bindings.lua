@@ -146,7 +146,6 @@ launcher = {
     { mod , "b"      , ut.spawn(const.browser)                               , "launch Browser"},
     { mod,  "p"      , ut.raise_or_spawn("keepassxc")                                 , "keepass"},
     { mod,  "r"      , ut.rofi(), "run prompt"},
-    { mod,  "g"      , ut.rofi({show = "drun", ['drun-categories'] = "Game"}), "run games"},
     { mods, "r"      , ut.rofi({show = "drun"}), "run desktop apps"},
     { mod,  "d"      , ut.rofi(nil, {floating = true}), "run prompt floating"},
     { mods, "d"      , ut.rofi({show = "drun"}, {floating = true}), "run desktop apps floating"},
@@ -193,6 +192,7 @@ client.connect_signal("request::default_keybindings", function(context)
                 c.ontop = c.sticky
             end, "toggle sticky"},
             { mod , "n", function (c) c.minimized = true end , "minimize"},
+            { mod,  "g", ut.toggle_titlebar , "toggle client titlebar"},
             { mod , {"[]"}, function (d, c) awful.client.incwfact(0.05 * d, c) end , "dec/inc size factor"},
             { mod , "m", ut.maximize(), "(un)maximize"},
             { modc,  "m", ut.maximize(ut.vert), "(un)maximize vertically"},
