@@ -114,9 +114,7 @@ awesome.connect_signal('xkb::map_changed', show_langbox(true))
 awesome.connect_signal('xkb::group_changed', show_langbox(true))
 
 month_calendar:attach(textclock, 'bl')
-
-screen.connect_signal(
-    'request::desktop_decoration', function(s)
+local function setup_screen(s)
         -- Each screen has its own tag table.
         -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
         local addtag = awful.tag.add
@@ -482,7 +480,7 @@ screen.connect_signal(
         )
         s.langbox:setup { layout = wibox.layout.align.horizontal, mykeyboardlayout }
     end
-)
+screen.connect_signal( 'request::desktop_decoration', setup_screen)
 
 screen.connect_signal(
     'request::resize', function(s)
