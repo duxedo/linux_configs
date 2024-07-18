@@ -9,6 +9,7 @@ local sensors = require('widgets.sensors')
 local fs_widget = require('widgets.fs-widget')
 
 local weather_widget = require('awesome-wm-widgets.weather-widget.weather')
+local net_widget = require('widgets.net-speed-widget.net-speed')
 local volume_widget = require('widgets.pactl-widget.volume')
 local battery_widget = require('awesome-wm-widgets.battery-widget.battery')
 local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightness")
@@ -376,6 +377,7 @@ screen.connect_signal(
                                 mykeyboardlayout,
                                 forced_height = 22
                             },
+                            net_widget( {interface = "enp39s0"} ),
                             { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
                         },
                         widget = wibox.container.margin,
