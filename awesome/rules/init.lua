@@ -2,9 +2,9 @@ local awful = require('awful')
 local ruled = require('ruled')
 local gears = require('gears')
 local beautiful = require('beautiful')
-local wibox = require('wibox')
 local constants = require('constants')
 local bindings = require('bindings')
+local utils = require('utils')
 
 ruled.client.connect_signal(
     'request::rules', function()
@@ -181,7 +181,9 @@ ruled.client.connect_signal(
             properties = {
                 buttons = gears.table.join(bindings.client_bindings, {
                         awful.button({ }, 2, function (c) c:kill() end)
-                    })
+                    }),
+
+                titlebars_enabled = true,
             }
         }
         ruled.client.append_rule {
@@ -234,53 +236,7 @@ client.connect_signal(
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal(
-    'request::titlebars', function(c)
-        -- buttons for the titlebar
-        local buttons = gears.table.join(
-                            awful.button(
-                                {}, 1, function()
-                    c:activate()
-                    awful.mouse.client.move(c)
-                end
-                            ), awful.button(
-                                {}, 3, function()
-                    c:activate()
-                    awful.mouse.client.resize(c, nil, awful.placement.right)
-                end
-                            )
-                        )
-
-        awful.titlebar(c).widget = {
-            { -- Left
-                awful.titlebar.widget.iconwidget(c),
-                buttons = buttons,
-                layout = wibox.layout.fixed.horizontal
-            },
-            { -- Middle
-                { -- Title
-                    halign = 'center',
-                    widget = awful.titlebar.widget.titlewidget(c)
-                },
-                buttons = buttons,
-                layout = wibox.layout.flex.horizontal
-            },
-            { -- Right
-                awful.titlebar.widget.floatingbutton(c),
-                awful.titlebar.widget.stickybutton(c),
-                -- awful.titlebar.widget.ontopbutton    (c),
-                awful.titlebar.widget.maximizedbutton(c),
-                awful.titlebar.widget.closebutton(c),
-                layout = wibox.layout.fixed.horizontal()
-            },
-            layout = wibox.layout.align.horizontal
-        }
-        -- Hide the menubar if we are not floating
-        local l = awful.layout.get(c.screen)
-        if l ~= nil and not (l.name == 'floating' or c.floating) then
-            awful.titlebar.hide(c)
-        end
-    end
-)
+    'request::titlebars', utils.setup_titlebar)
 
 client.connect_signal(
     'focus', function(c)

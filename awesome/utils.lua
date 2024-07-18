@@ -1,5 +1,7 @@
 local awful = require('awful')
 local inspect = require('inspect')
+local gears = require('gears')
+local wibox = require('wibox')
 
 local utils = {}
 
@@ -397,4 +399,62 @@ function utils.fullscreen(c)
     c:raise()
 end
 
+function utils.setup_titlebar(c)
+        -- buttons for the titlebar
+        local buttons = gears.table.join(
+                            awful.button(
+                                {}, 1, function()
+                    c:activate()
+                    awful.mouse.client.move(c)
+                end
+                            ), awful.button(
+                                {}, 3, function()
+                    c:activate()
+                    awful.mouse.client.resize(c, nil, awful.placement.right)
+                end
+                            )
+                        )
+
+        awful.titlebar(c).widget = {
+            { -- Left
+                awful.titlebar.widget.iconwidget(c),
+                buttons = buttons,
+                layout = wibox.layout.fixed.horizontal
+            },
+            { -- Middle
+                { -- Title
+                    halign = 'center',
+                    widget = awful.titlebar.widget.titlewidget(c)
+                },
+                buttons = buttons,
+                layout = wibox.layout.flex.horizontal
+            },
+            { -- Right
+                awful.titlebar.widget.floatingbutton(c),
+                awful.titlebar.widget.stickybutton(c),
+                -- awful.titlebar.widget.ontopbutton    (c),
+                awful.titlebar.widget.maximizedbutton(c),
+                awful.titlebar.widget.closebutton(c),
+                layout = wibox.layout.fixed.horizontal()
+            },
+            layout = wibox.layout.align.horizontal
+        }
+        -- Hide the menubar if we are not floating
+        local l = awful.layout.get(c.screen)
+        if l ~= nil and not (l.name == 'floating' or c.floating) then
+            --awful.titlebar.hide(c)
+        end
+end
+
+function utils.toggle_titlebar(c)
+    c.titlebars_enabled = not c.titlebars_enabled
+    if c.titlebars_enabled then
+        if not awful.titlebar(c).widget then
+            utils.setup_titlebar(c)
+        end
+        awful.titlebar.show(c)
+    else
+        awful.titlebar.hide(c)
+    end
+end
 return utils
