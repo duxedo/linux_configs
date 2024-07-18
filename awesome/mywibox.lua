@@ -37,7 +37,7 @@ local function client_menu_toggle_fn()
     end
 end
 local function iffocussed(f)
-    return function (t)
+    return function(t)
         if client.focus then
             f(client.focus, t)
         end
@@ -114,373 +114,378 @@ awesome.connect_signal('xkb::map_changed', show_langbox(true))
 awesome.connect_signal('xkb::group_changed', show_langbox(true))
 
 month_calendar:attach(textclock, 'bl')
-local function setup_screen(s)
-        -- Each screen has its own tag table.
-        -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
-        local addtag = awful.tag.add
-        local default = function()
-            return
-            {
-                layout = awful.layout.suit.tile,
-                column_count = constants.notebook and 1 or 2,
-                screen = s,
-            }
-        end
-        addtag('1', default()):view_only()
-        addtag('q', default())
-        addtag('2', default())
-        addtag(
-            'w', constants.notebook and default() or {
-                layout = awful.layout.suit.tile,
-                column_count = 10,
-                master_count = 0,
-                screen = s
-            }
-        )
-        addtag('3', default())
-        addtag(
-            'e', constants.notebook and default() or {
-                layout = awful.layout.suit.tile,
-                column_count = 10,
-                master_count = 0,
-                screen = s
-            }
-        )
-        addtag('4', default())
-        addtag('5', default())
-        addtag('6', default())
-        addtag('7', default())
-        addtag('8', default())
-        addtag('9', default())
-        -- Create a promptbox for each screen
-        s.mypromptbox = awful.widget.prompt()
-        -- Create an imagebox widget which will contains an icon indicating which layout we're using.
-        -- We need one layoutbox per screen.
-        s.mylayoutbox = awful.widget.layoutbox(s)
-        local function modLayout(dir)
-            return function()
-                awful.layout.inc(dir)
-            end
-        end
-        s.mylayoutbox:buttons(
-            gears.table.join(
-                awful.button({}, 1, modLayout(1)),
-                awful.button({}, 3, modLayout(-1)),
-                awful.button({}, 4, modLayout(1)),
-                awful.button({}, 5, modLayout(-1))
-            )
-        )
 
-        local tag_base_layout = constants.notebook and {
-                layout = wibox.layout.grid,
-                forced_num_cols = 3,
-                homogenous = true,
-                horizontal_expand = true,
-            }
-            or
-            {
-                layout = wibox.layout.grid,
-                forced_num_rows = 2,
-                forced_num_cols = 6,
-                homogenous = true,
-                expand = true
-            }
-        -- Create a taglist widget
-        s.mytaglist = awful.widget.taglist {
-            screen = s,
-            filter = awful.widget.taglist.filter.all,
-            buttons = taglist_buttons,
-            base_layout = tag_base_layout,
-            widget_template = {
-                {
-                    { id = 'label_role', widget = wibox.widget.textbox },
-                    margins = { left = 4, right = 4, top = 2, bottom = 3 },
-                    widget = wibox.container.margin
-                },
-                id = 'background_role',
-                widget = wibox.container.background,
-                -- Add support for hover colors and an index label
-                create_callback = function(self, c3, _, _)  --index, tags)
-                    self.label = self.label or self:get_children_by_id('label_role')[1]
-                    self.label.markup = '<b>' .. c3.name .. '</b>'
-                    self:connect_signal(
-                        'mouse::enter', function()
-                            if self.bg ~= '#ee0000' then
-                                self.backup = self.bg
-                                self.has_backup = true
-                            end
-                            self.bg = '#ee0000'
-                        end
-                    )
-                    self:connect_signal(
-                        'mouse::leave', function()
-                            if self.has_backup then
-                                self.bg = self.backup
-                            end
-                        end
-                    )
-                end,
-                update_callback = function(self, c3, _, _) --index, tags)
-                    self.label.markup = '<b>' .. c3.name .. '</b>'
-                end
-            }
+local function setup_tags(screen)
+    local addtag = awful.tag.add
+    local default = function()
+        return
+        {
+            layout = awful.layout.suit.tile,
+            column_count = constants.notebook and 1 or 2,
+            screen = screen,
         }
+    end
+    addtag('1', default()):view_only()
+    addtag('q', default())
+    addtag('2', default())
+    addtag(
+        'w', constants.notebook and default() or {
+            layout = awful.layout.suit.tile,
+            column_count = 10,
+            master_count = 0,
+            screen = screen
+        }
+    )
+    addtag('3', default())
+    addtag(
+        'e', constants.notebook and default() or {
+            layout = awful.layout.suit.tile,
+            column_count = 10,
+            master_count = 0,
+            screen = screen
+        }
+    )
+    addtag('4', default())
+    addtag('5', default())
+    addtag('6', default())
+    addtag('7', default())
+    addtag('8', default())
+    addtag('9', default())
+end
 
-        local tooltip = awful.tooltip {}
-        local widget_template = constants.notebook and
+local function setup_screen(s)
+    setup_tags(s)
+    -- Each screen has its own tag table.
+    -- awful.tag({ "1", "q", "2", "w", "3", "e"}, s, awful.layout.layouts[1])
+    -- Create a promptbox for each screen
+    s.mypromptbox = awful.widget.prompt()
+    -- Create an imagebox widget which will contains an icon indicating which layout we're using.
+    -- We need one layoutbox per screen.
+    s.mylayoutbox = awful.widget.layoutbox(s)
+    local function modLayout(dir)
+        return function()
+            awful.layout.inc(dir)
+        end
+    end
+    s.mylayoutbox:buttons(
+        gears.table.join(
+            awful.button({}, 1, modLayout(1)),
+            awful.button({}, 3, modLayout(-1)),
+            awful.button({}, 4, modLayout(1)),
+            awful.button({}, 5, modLayout(-1))
+        )
+    )
+
+    local tag_base_layout = constants.notebook and {
+            layout = wibox.layout.grid,
+            forced_num_cols = 3,
+            homogenous = true,
+            horizontal_expand = true,
+        }
+        or
+        {
+            layout = wibox.layout.grid,
+            forced_num_rows = 2,
+            forced_num_cols = 6,
+            homogenous = true,
+            expand = true
+        }
+    -- Create a taglist widget
+    s.mytaglist = awful.widget.taglist {
+        screen = s,
+        filter = awful.widget.taglist.filter.all,
+        buttons = taglist_buttons,
+        base_layout = tag_base_layout,
+        widget_template = {
+            {
+                { id = 'label_role', widget = wibox.widget.textbox },
+                margins = { left = 4, right = 4, top = 2, bottom = 3 },
+                widget = wibox.container.margin
+            },
+            id = 'background_role',
+            widget = wibox.container.background,
+            -- Add support for hover colors and an index label
+            create_callback = function(self, c3, _, _)     --index, tags)
+                self.label = self.label or self:get_children_by_id('label_role')[1]
+                self.label.markup = '<b>' .. c3.name .. '</b>'
+                self:connect_signal(
+                    'mouse::enter', function()
+                        if self.bg ~= '#ee0000' then
+                            self.backup = self.bg
+                            self.has_backup = true
+                        end
+                        self.bg = '#ee0000'
+                    end
+                )
+                self:connect_signal(
+                    'mouse::leave', function()
+                        if self.has_backup then
+                            self.bg = self.backup
+                        end
+                    end
+                )
+            end,
+            update_callback = function(self, c3, _, _)     --index, tags)
+                self.label.markup = '<b>' .. c3.name .. '</b>'
+            end
+        }
+    }
+
+    local tooltip = awful.tooltip {}
+    local widget_template = constants.notebook and
+        {
+            {
+                layout = wibox.layout.align.vertical,
+                {
+                    awful.widget.clienticon,
+                    margins = 3,
+                    widget = wibox.container.margin,
+                    forced_width = 30,
+                    forced_height = 30
+                },
+                {
+                    {
+                        {
+                            id        = 'text_role',
+                            wrap      = 'char',
+                            visible   = true,
+                            ellipsize = false,
+                            font      = "Sans 3",
+                            widget    = wibox.widget.textbox,
+                        },
+                        direction = "east",
+                        widget = wibox.container.rotate
+                    },
+                    widget = function(widget)
+                        return wibox.container.margin(widget, 3, 3, 3, 5)
+                    end
+                },
+                nil,
+            },
+            id = 'background_role',
+            widget = function(widget)
+                widget = wibox.container.background(widget)
+                widget:connect_signal(
+                    'mouse::enter', function(self)
+                        tooltip:add_to_object(widget)
+                        tooltip.text = self:get_children_by_id('text_role')[1].text
+                    end
+                )
+                return widget
+            end,
+            forced_height = 200
+        }
+        or
+        {
             {
                 {
-                    layout = wibox.layout.align.vertical,
+                    layout = wibox.layout.align.horizontal,
+                    nil,
+                    nil,
                     {
                         awful.widget.clienticon,
-                        margins = 3,
+                        margins = 5,
                         widget = wibox.container.margin,
                         forced_width = 30,
                         forced_height = 30
-                    },
-                    {
-                        {
-                            {
-                                id        = 'text_role',
-                                wrap      = 'char',
-                                visible   = true,
-                                ellipsize = false,
-                                font      = "Sans 3",
-                                widget    = wibox.widget.textbox,
-                            },
-                            direction = "east",
-                            widget = wibox.container.rotate
-                        },
-                        widget = function(widget)
-                            return wibox.container.margin(widget, 3, 3, 3, 5)
-                        end
-                    },
-                    nil,
+                    }
                 },
-                id = 'background_role',
-                widget = function(widget)
-                    widget = wibox.container.background(widget)
-                    widget:connect_signal(
-                        'mouse::enter', function(self)
-                            tooltip:add_to_object(widget)
-                            tooltip.text = self:get_children_by_id('text_role')[1].text
-                        end
-                    )
-                    return widget
-                end,
-                forced_height = 200
-            }
-            or
-            {
                 {
-                    {
-                        layout = wibox.layout.align.horizontal,
-                        nil,
-                        nil,
-                        {
-                            awful.widget.clienticon,
-                            margins = 5,
-                            widget = wibox.container.margin,
-                            forced_width = 30,
-                            forced_height = 30
-                        }
-                    },
-                    {
-                        { id = 'text_role', widget = wibox.widget.textbox, wrap = 'char' },
-                        widget = function(widget)
-                            return wibox.container.margin(widget, 5, 5)
-                        end
-                    },
-                    layout = wibox.layout.fixed.vertical
+                    { id = 'text_role', widget = wibox.widget.textbox, wrap = 'char' },
+                    widget = function(widget)
+                        return wibox.container.margin(widget, 5, 5)
+                    end
                 },
-                id = 'background_role',
-                widget = function(widget)
-                    widget = wibox.container.background(widget)
-                    widget:connect_signal(
-                        'mouse::enter', function(self)
-                            tooltip:add_to_object(widget)
-                            tooltip.text = self:get_children_by_id('text_role')[1].text
-                        end
-                    )
-                    return widget
-                end,
-                forced_height = 90
-            }
-        -- Create a tasklist widget
-        s.mytasklist = awful.widget.tasklist {
-            screen = s,
-            filter = awful.widget.tasklist.filter.currenttags,
-            buttons = tasklist_buttons,
-            layout = {
                 layout = wibox.layout.fixed.vertical
             },
-            style = {
-                spacing = 5,
-                shape_border_color = '#4A4A4A',
-                shape = function(cr, width, height)
-                    gears.shape.partially_rounded_rect(
-                        cr, width, height, true, false, true, false, 10
-                    )
-                end
+            id = 'background_role',
+            widget = function(widget)
+                widget = wibox.container.background(widget)
+                widget:connect_signal(
+                    'mouse::enter', function(self)
+                        tooltip:add_to_object(widget)
+                        tooltip.text = self:get_children_by_id('text_role')[1].text
+                    end
+                )
+                return widget
+            end,
+            forced_height = 90
+        }
+    -- Create a tasklist widget
+    s.mytasklist = awful.widget.tasklist {
+        screen = s,
+        filter = awful.widget.tasklist.filter.currenttags,
+        buttons = tasklist_buttons,
+        layout = {
+            layout = wibox.layout.fixed.vertical
+        },
+        style = {
+            spacing = 5,
+            shape_border_color = '#4A4A4A',
+            shape = function(cr, width, height)
+                gears.shape.partially_rounded_rect(
+                    cr, width, height, true, false, true, false, 10
+                )
+            end
+        },
+        bg = '#FF0000',
+
+        widget_template = widget_template
+    }
+
+    -- Create the wibox
+    s.mywibox = awful.wibar {
+        position = 'left',
+        height = s.geometry.height,
+        screen = s,
+        visible = true,
+        opacity = 0.7,
+        --bg = '#00000055',
+        --bgimage = '/home/reinhardt/Documents/transp.png',
+        width = constants.notebook and 57 or theme.wibox_width
+    }
+    local wibox_cfg = not constants.notebook and
+        {
+            layout = wibox.layout.align.vertical,
+            {     -- Top widgets
+                layout = wibox.layout.fixed.vertical,
+                { layout = wibox.layout.flex.horizontal, s.mytaglist,                forced_height = 40 },
+                { layout = wibox.layout.flex.horizontal, cpu_widget { timeout = 2 }, forced_height = 40 },
+                ram_widget { timeout = 2 },
             },
-            bg = '#FF0000',
-
-            widget_template = widget_template
-        }
-
-        -- Create the wibox
-        s.mywibox = awful.wibar {
-            position = 'left',
-            height = s.geometry.height,
-            screen = s,
-            visible = true,
-            opacity = 0.7,
-            --bg = '#00000055',
-            --bgimage = '/home/reinhardt/Documents/transp.png',
-            width = constants.notebook and 57 or theme.wibox_width
-        }
-        local wibox_cfg = not constants.notebook and
-            {
-                layout = wibox.layout.align.vertical,
-                { -- Top widgets
-                    layout = wibox.layout.fixed.vertical,
-                    { layout = wibox.layout.flex.horizontal, s.mytaglist,               forced_height = 40 },
-                    { layout = wibox.layout.flex.horizontal, cpu_widget { timeout = 2 }, forced_height = 40 },
-                    ram_widget { timeout = 2 },
-                },
-                s.mytasklist, -- Middle widget
-                {         -- Bottom widgets
-                    layout = wibox.layout.fixed.vertical,
+            s.mytasklist,     -- Middle widget
+            {                 -- Bottom widgets
+                layout = wibox.layout.fixed.vertical,
+                {
                     {
+                        layout = wibox.layout.fixed.vertical,
+                        awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
+                        constants.sensors_format and sensors(constants.sensors_format),
+                        fs_widget { mounts = { '/', '/archive', '/mnt/stor', '/boot' } },
                         {
-                            layout = wibox.layout.fixed.vertical,
-                            awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
-                            constants.sensors_format and sensors(constants.sensors_format),
-                            fs_widget{ mounts = { '/', '/archive', '/mnt/stor', '/boot' }},
-                            {
-                                layout = wibox.layout.align.horizontal,
-                                s.mylayoutbox,
-                                weather_widget(
-                                    {
-                                        api_key = constants.weather_api_key,
-                                        coordinates = { 60.004, 30.324 },
-                                        show_hourly_forecast = true,
-                                        show_daily_forecast = true,
-                                        timeout = 600
-                                    }
-                                ),
-                                mykeyboardlayout,
-                                forced_height = 22
-                            },
-                            net_widget( {interface = "enp39s0"} ),
-                            { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
-                        },
-                        widget = wibox.container.margin,
-                        left = 2,
-                        right = 2
-                    },
-                    {
-                        {
-                            layout = wibox.layout.fixed.horizontal,
-                            volume_widget {
-                                --device = "pipewire",
-                                widget_type = "horizontal_bar",
-                                mixer_cmd = 'pavucontrol -t 5'
-                            },
-                            forced_height = 25,
-                        },
-                        widget = wibox.container.margin,
-                        left = 4,
-                        right = 4
-                    },
-                    { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock, },
-                    { layout = wibox.layout.fixed.horizontal, forced_height = math.random(25), nil, }
-                }
-            }
-            or
-            {
-                layout = wibox.layout.align.vertical,
-                { -- Top widgets
-                    -- Top widgets
-                    { layout = wibox.layout.flex.horizontal, s.mytaglist },
-                    layout = wibox.layout.fixed.vertical,
-                    ram_widget { timeout = 2 },
-                    cpu_widget { timeout = 2 },
-                },
-                s.mytasklist, -- Middle widget
-                {         -- Bottom widgets
-                    layout = wibox.layout.fixed.vertical,
-                    {
-                        {
-                            layout = wibox.layout.fixed.vertical,
-                            constants.sensors_format and sensors(constants.sensors_format),
-                            {
-                                layout = wibox.layout.align.horizontal,
-                                s.mylayoutbox,
-                                mykeyboardlayout,
-                                forced_height = 25
-                            },
-                            {
-                                layout = wibox.layout.align.horizontal,
-                                battery_widget(),
-                                brightness_widget(),
-                                forced_height = 25
-                            },
+                            layout = wibox.layout.align.horizontal,
+                            s.mylayoutbox,
                             weather_widget(
                                 {
                                     api_key = constants.weather_api_key,
                                     coordinates = { 60.004, 30.324 },
                                     show_hourly_forecast = true,
-                                    show_daily_forecast = true
+                                    show_daily_forecast = true,
+                                    timeout = 600
                                 }
                             ),
-                            {
-                                widget = wibox.widget.systray,
-                                horizontal = false,
-                                base_size = 24
-                            }
+                            mykeyboardlayout,
+                            forced_height = 22
                         },
-                        widget = wibox.container.margin,
-                        left = 2,
-                        right = 2
+                        net_widget({ interface = "enp39s0" }),
+                        { widget = wibox.widget.systray, horizontal = false, base_size = 25 },
                     },
+                    widget = wibox.container.margin,
+                    left = 2,
+                    right = 2
+                },
+                {
                     {
-                        {
-                            layout = wibox.layout.fixed.horizontal,
-                            volume_widget {
-                                --device = "pipewire",
-                                widget_type = "horizontal_bar",
-                                mixer_cmd = 'pavucontrol -t 5'
-                            },
-                            forced_height = 30,
+                        layout = wibox.layout.fixed.horizontal,
+                        volume_widget {
+                            --device = "pipewire",
+                            widget_type = "horizontal_bar",
+                            mixer_cmd = 'pavucontrol -t 5'
                         },
-                        widget = wibox.container.margin,
-                        left = 4,
-                        right = 4
+                        forced_height = 25,
                     },
-                    { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
-                }
+                    widget = wibox.container.margin,
+                    left = 4,
+                    right = 4
+                },
+                { layout = wibox.layout.fixed.horizontal, forced_height = 25,              textclock, },
+                { layout = wibox.layout.fixed.horizontal, forced_height = math.random(25), nil, }
             }
-        -- Add widgets to the wibox
-        s.mywibox:setup(wibox_cfg)
+        }
+        or
+        {
+            layout = wibox.layout.align.vertical,
+            {     -- Top widgets
+                -- Top widgets
+                { layout = wibox.layout.flex.horizontal, s.mytaglist },
+                layout = wibox.layout.fixed.vertical,
+                ram_widget { timeout = 2 },
+                cpu_widget { timeout = 2 },
+            },
+            s.mytasklist,     -- Middle widget
+            {                 -- Bottom widgets
+                layout = wibox.layout.fixed.vertical,
+                {
+                    {
+                        layout = wibox.layout.fixed.vertical,
+                        constants.sensors_format and sensors(constants.sensors_format),
+                        {
+                            layout = wibox.layout.align.horizontal,
+                            s.mylayoutbox,
+                            mykeyboardlayout,
+                            forced_height = 25
+                        },
+                        {
+                            layout = wibox.layout.align.horizontal,
+                            battery_widget(),
+                            brightness_widget(),
+                            forced_height = 25
+                        },
+                        weather_widget(
+                            {
+                                api_key = constants.weather_api_key,
+                                coordinates = { 60.004, 30.324 },
+                                show_hourly_forecast = true,
+                                show_daily_forecast = true
+                            }
+                        ),
+                        {
+                            widget = wibox.widget.systray,
+                            horizontal = false,
+                            base_size = 24
+                        }
+                    },
+                    widget = wibox.container.margin,
+                    left = 2,
+                    right = 2
+                },
+                {
+                    {
+                        layout = wibox.layout.fixed.horizontal,
+                        volume_widget {
+                            --device = "pipewire",
+                            widget_type = "horizontal_bar",
+                            mixer_cmd = 'pavucontrol -t 5'
+                        },
+                        forced_height = 30,
+                    },
+                    widget = wibox.container.margin,
+                    left = 4,
+                    right = 4
+                },
+                { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
+            }
+        }
+    -- Add widgets to the wibox
+    s.mywibox:setup(wibox_cfg)
 
-        s.langbox = wibox(
-            {
-                position = 'top',
-                x = 40,
-                y = s.geometry.height - 40,
-                width = 20,
-                height = 20,
-                screen = s,
-                ontop = true,
-                visible = false,
-                restrict_workarea = false,
-                type = 'menu'
-            }
-        )
-        s.langbox:setup { layout = wibox.layout.align.horizontal, mykeyboardlayout }
-    end
-screen.connect_signal( 'request::desktop_decoration', setup_screen)
+    s.langbox = wibox(
+        {
+            position = 'top',
+            x = 40,
+            y = s.geometry.height - 40,
+            width = 20,
+            height = 20,
+            screen = s,
+            ontop = true,
+            visible = false,
+            restrict_workarea = false,
+            type = 'menu'
+        }
+    )
+    s.langbox:setup { layout = wibox.layout.align.horizontal, mykeyboardlayout }
+end
+screen.connect_signal('request::desktop_decoration', setup_screen)
 
 screen.connect_signal(
     'request::resize', function(s)
