@@ -396,7 +396,8 @@ screen.connect_signal(
                         left = 4,
                         right = 4
                     },
-                    { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock, }
+                    { layout = wibox.layout.fixed.horizontal, forced_height = 25, textclock, },
+                    { layout = wibox.layout.fixed.horizontal, forced_height = math.random(25), nil, }
                 }
             }
             or
