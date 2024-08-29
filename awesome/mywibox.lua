@@ -321,14 +321,14 @@ end
 local function create_wibox_layout(screen)
     return {
         layout = wibox.layout.align.vertical,
-        {     -- Top widgets
+        { -- Top widgets
             layout = wibox.layout.fixed.vertical,
             { layout = wibox.layout.flex.horizontal, screen.mytaglist,           forced_height = 40 },
             { layout = wibox.layout.flex.horizontal, cpu_widget { timeout = 2 }, forced_height = 40 },
             ram_widget { timeout = 2 },
         },
-        screen.mytasklist,     -- Middle widget
-        {                      -- Bottom widgets
+        screen.mytasklist, -- Middle widget
+        {                  -- Bottom widgets
             layout = wibox.layout.fixed.vertical,
             {
                 {
@@ -381,15 +381,15 @@ end
 local function create_wibox_layout_notebook(screen)
     return {
         layout = wibox.layout.align.vertical,
-        {     -- Top widgets
+        { -- Top widgets
             -- Top widgets
             { layout = wibox.layout.flex.horizontal, screen.mytaglist },
             layout = wibox.layout.fixed.vertical,
             ram_widget { timeout = 2 },
             cpu_widget { timeout = 2 },
         },
-        screen.mytasklist,     -- Middle widget
-        {                      -- Bottom widgets
+        screen.mytasklist, -- Middle widget
+        {                  -- Bottom widgets
             layout = wibox.layout.fixed.vertical,
             {
                 {

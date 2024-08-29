@@ -3,7 +3,7 @@ local gears = require('gears')
 return {
     {
         id = 'steam_games',
-        rule_any = { class = { 'steam_app.*', 'RPCS3', 'hogwartslegacy.exe' } },
+        rule_any = { class = { 'steam_app.*', 'RPCS3', 'hogwartslegacy.exe' ,'enshrouded.exe' } },
         -- properties = {
         --    _NET_WM_BYPASS_COMPOSITOR = 1
         -- }
