@@ -16,6 +16,7 @@ local brightness_widget = require("awesome-wm-widgets.brightness-widget.brightne
 local cpu_widget = require('awesome-wm-widgets.cpu-widget.cpu-widget')
 local ram_widget = require('widgets.ram-widget')
 local modkey = constants.modkey
+local dpi = require("beautiful.xresources").apply_dpi
 -- Menubar configuration
 menubar.utils.terminal = constants.terminal -- Set the terminal for applications that require it
 -- }}}
@@ -253,7 +254,7 @@ local function create_tasklist_template_notebook()
             )
             return widget
         end,
-        forced_height = 200
+        forced_height = dpi(200)
     }
 end
 
@@ -399,13 +400,13 @@ local function create_wibox_layout_notebook(screen)
                         layout = wibox.layout.align.horizontal,
                         screen.mylayoutbox,
                         mykeyboardlayout,
-                        forced_height = 25
+                        forced_height = dpi(25)
                     },
                     {
                         layout = wibox.layout.align.horizontal,
                         battery_widget(),
                         brightness_widget(),
-                        forced_height = 25
+                        forced_height = dpi(25)
                     },
                     weather_widget(
                         {
@@ -418,7 +419,7 @@ local function create_wibox_layout_notebook(screen)
                     {
                         widget = wibox.widget.systray,
                         horizontal = false,
-                        base_size = 24
+                        base_size = dpi(24)
                     }
                 },
                 widget = wibox.container.margin,
@@ -439,7 +440,7 @@ local function create_wibox_layout_notebook(screen)
                 left = 4,
                 right = 4
             },
-            { layout = wibox.layout.fixed.horizontal, forced_height = 75, textclock }
+            { layout = wibox.layout.fixed.horizontal, forced_height = dpi(75), textclock }
         }
     }
 end
@@ -484,7 +485,7 @@ local function setup_screen(s)
         opacity = 0.7,
         --bg = '#00000055',
         --bgimage = '/home/reinhardt/Documents/transp.png',
-        width = constants.notebook and 57 or theme.wibox_width
+        width = constants.notebook and dpi(57) or theme.wibox_width
     }
 
     s.mywibox:setup(constants.notebook and create_wibox_layout_notebook(s) or create_wibox_layout(s))
