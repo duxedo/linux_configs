@@ -303,7 +303,7 @@ local function create_tasklist(screen)
         filter = awful.widget.tasklist.filter.currenttags,
         buttons = tasklist_buttons,
         layout = {
-            layout = wibox.layout.fixed.vertical
+            layout = constants.notebook and wibox.layout.flex.vertical or wibox.layout.fixed.vertical
         },
         style = {
             spacing = 5,
