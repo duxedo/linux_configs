@@ -32,6 +32,7 @@ run kdeconnect-indicator
 run picom -b
 #run signal-desktop --use-tray-icon
 run deluge 
+run ciadpi --disorder 1 --auto=torst --tlsrec 1+s
 sleep 1
 dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 #xscreensaver-command -lock &
