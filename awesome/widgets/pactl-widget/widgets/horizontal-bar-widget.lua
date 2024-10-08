@@ -37,6 +37,7 @@ function widget.get_widget(widgets_args)
             margins = { top = margins, bottom = margins },
             background_color = bg_color,
             shape = gears.shape[shape],
+            bar_border_width = 0,
             widget = wibox.widget.progressbar,
         },
         spacing = 4,

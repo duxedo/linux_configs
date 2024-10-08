@@ -360,18 +360,13 @@ local function create_wibox_layout(screen)
                 right = 2
             },
             {
-                {
-                    layout = wibox.layout.fixed.horizontal,
-                    volume_widget {
-                        --device = "pipewire",
-                        widget_type = "horizontal_bar",
-                        mixer_cmd = 'pavucontrol -t 5'
-                    },
-                    forced_height = 25,
+                layout = wibox.layout.fixed.horizontal,
+                volume_widget {
+                    --device = "pipewire",
+                    widget_type = "horizontal_bar",
+                    mixer_cmd = 'pavucontrol -t 5'
                 },
-                widget = wibox.container.margin,
-                left = 4,
-                right = 4
+                forced_height = 25,
             },
             { layout = wibox.layout.fixed.horizontal, forced_height = 25,              textclock, },
             { layout = wibox.layout.fixed.horizontal, forced_height = math.random(25), nil, }
