@@ -24,7 +24,6 @@ run dunst
 run blueman-applet
 run telegram-desktop
 run squadus
-run nm-applet
 run redshift-gtk -l 60.0:30.3 -m vidmode -t 6500:5500
 run xscreensaver --no-splash
 #run discord
@@ -32,7 +31,7 @@ run kdeconnect-indicator
 run picom -b
 #run signal-desktop --use-tray-icon
 run deluge 
-run ciadpi --disorder 1 --auto=torst --tlsrec 1+s
+run ciadpi --disorder 1 --auto=torst # --tlsrec 1+s
 sleep 1
 dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"
 #xscreensaver-command -lock &
