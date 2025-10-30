@@ -354,7 +354,7 @@ local function create_wibox_layout(screen)
                         mykeyboardlayout,
                         forced_height = 22
                     },
-                    net_widget({ interface = "enp39s0" }),
+                    net_widget({ interface = "bond1" }),
                     { widget = wibox.widget.systray, horizontal = false, reverse = true, base_size = 25 },
                 },
                 widget = wibox.container.margin,
