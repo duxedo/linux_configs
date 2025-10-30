@@ -338,7 +338,7 @@ local function create_wibox_layout(screen)
                     awful.widget.watch("cat /home/reinhardt/notes/memo", 2),
                     awful.widget.watch("cat /home/reinhardt/work/notes/todo", 2),
                     constants.sensors_format and sensors(constants.sensors_format),
-                    fs_widget { mounts = { '/', '/archive', '/mnt/stor', '/boot' } },
+                    fs_widget { mounts = { '/', '/archive', '/mnt/stor', '/mnt/stor2', '/boot' } },
                     {
                         layout = wibox.layout.align.horizontal,
                         screen.mylayoutbox,
