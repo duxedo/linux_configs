@@ -55,14 +55,14 @@ local function worker(user_args)
             border_radius = 2,
             border_color = _config.widget_border_color,
             background_color = _config.widget_background_color,
-            widget = wibox.widget.progressbar
+            widget = wibox.widget.textbox
         },
         shape = function(cr, width, height)
             gears.shape.rounded_rect(cr, width, height, 4)
         end,
         widget = wibox.container.background,
         set_value = function(self, new_value)
-            self:get_children_by_id("progressbar")[1].value = new_value
+            self:get_children_by_id("progressbar")[1].text = new_value
         end
     }
 
@@ -115,6 +115,8 @@ local function worker(user_args)
     )
 
     local disks = {}
+    local gib_divisor = 1024 * 1024
+
     watch([[bash -c "df | tail -n +2"]], _config.refresh_rate,
             function(widget, stdout)
                 for line in stdout:gmatch("[^\r\n$]+") do
@@ -130,7 +132,7 @@ local function worker(user_args)
                     disks[mount].mount = mount
 
                     if disks[mount].mount == _config.mounts[1] then
-                        widget:set_value(tonumber(disks[mount].perc))
+                        widget:set_value(math.floor(disks[mount].avail/gib_divisor) .. 'GB free on /')
                     end
                 end
 
@@ -157,9 +159,9 @@ local function worker(user_args)
                             widget = wibox.widget.progressbar,
                         },
                         {
-                            text = math.floor(disks[v].used / 1024 / 1024)
+                            text = math.floor(disks[v].used / gib_divisor)
                                     .. '/'
-                                    .. math.floor(disks[v].size / 1024 / 1024) .. 'GiB('
+                                    .. math.floor(disks[v].size / gib_divisor) .. 'GiB('
                                     .. math.floor(disks[v].perc) .. '%)',
                             widget = wibox.widget.textbox
                         },
