@@ -116,14 +116,16 @@ awesome.connect_signal('xkb::map_changed', show_langbox(true))
 awesome.connect_signal('xkb::group_changed', show_langbox(true))
 
 month_calendar:attach(textclock, 'bl')
+mytile = require("layouts.mytile")
 
 local function setup_tags(screen)
     local addtag = awful.tag.add
     local default = function()
         return
         {
-            layout = awful.layout.suit.tile,
-            column_count = constants.notebook and 1 or 2,
+            layout = mytile,
+            column_count = 4, -- constants.notebook and 1 or 2,
+            master_count = 0, -- constants.notebook and 1 or 2,
             screen = screen,
         }
     end
@@ -132,7 +134,7 @@ local function setup_tags(screen)
     addtag('2', default())
     addtag(
         'w', constants.notebook and default() or {
-            layout = awful.layout.suit.tile,
+            layout = mytile,
             column_count = 10,
             master_count = 0,
             screen = screen
@@ -141,7 +143,7 @@ local function setup_tags(screen)
     addtag('3', default())
     addtag(
         'e', constants.notebook and default() or {
-            layout = awful.layout.suit.tile,
+            layout = mytile,
             column_count = 10,
             master_count = 0,
             screen = screen
