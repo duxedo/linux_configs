@@ -98,7 +98,7 @@ bindings.global = {
 client = {
     { mods , {"jk"}  , awful.client.swap.byidx                  , "swap with next/previous client"},
     { mod  , {"jk"}  , ut.focus_by_idx                          , "focus next/previous by index"},
-    { mod  , "u"     , awful.client.urgent.jumpto               , "jump to urgent client"},
+    --{ mod  , "u"     , awful.client.urgent.jumpto               , "jump to urgent client"},
     { mod  , "Tab"   , function() ut.focus_by_idx(1) end        , "cycle focus"},
     { modc , "n"     , ut.restore_last_minimized                , "restore minimized"},
     { modc  , {"-="}  , function (d) ut.inc_opacity(d * 0.1)() end, "increase/decrease opacity"},
